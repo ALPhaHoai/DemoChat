@@ -9,7 +9,7 @@ import SnapKit
 
 class ChatBoxController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     var token = ""
-    var users = [String, Any]()
+    var users = [String: Any]()
 
     let roomTable: UITableView = {
         let tableView = UITableView()

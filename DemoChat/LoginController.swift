@@ -8,6 +8,7 @@ import UIKit
 import SnapKit
 import SocketIO
 import Material
+import Alamofire
 
 class LoginController: UIViewController {
     let loginButton: UIButton = {
@@ -51,7 +52,7 @@ class LoginController: UIViewController {
             "username": username,
         ]
 
-        Alamofire.request(loginEndPoint, method: .post, parameters: parameters).responseJSON { res in
+        Alamofire.request(loginEndpoint, method: .post, parameters: parameters).responseJSON { res in
             if let result = res.result.value as? [String: Any]? {
                 guard
                         let status = result["status"] as? Int,
