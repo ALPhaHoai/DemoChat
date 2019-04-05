@@ -9,6 +9,10 @@ import SocketIO
 import Material
 import Alamofire
 
+
+var socketManager: SocketManager? = nil
+public  var socket : SocketIOClient? = nil
+
 class LoginController: UIViewController {
     let loginButton: UIButton = {
         let loginButton = FlatButton(title: "Login")
@@ -39,22 +43,36 @@ class LoginController: UIViewController {
     }
 
     func goToChatRoom(token: String, users: [String: Any]) {
-        let chatController = ChatBoxController()
-        if let clients = users["clients"] as? [[String: Any]]{
-            chatController.rooms = clients
-        }
+        let roomController = RoomController()
 
         let user = User(
                 username: users["Username"] as? String ?? "",
                 avatar: users["Avatar"] as? String ?? "",
                 id: users["User_ID"] as? String ?? "",
                 name: users["name"] as? String ?? "")
-        chatController.token = token
-        chatController.user = user
-        self.navigationController?.pushViewController(chatController, animated: false)
+
+        if let clients = users["clients"] as? [[String: Any]] {
+            for room in clients {
+                var client = Client()
+                client.sender = user.id
+                client.avatar = room["Avatar"] as? String ?? ""
+                client.roomName = room["Room_Name"] as? String ?? ""
+                client.userID = room["User_ID"] as? String ?? ""
+                client.username = room["Username"] as? String ?? ""
+                client.name = room["name"] as? String ?? ""
+                client.online = (room["online"] as? Int ?? 0 != 0)
+                client.type = room["type"] as? Int ?? 0
+                roomController.clients.append(client)
+            }
+        }
+
+        roomController.token = token
+        roomController.user = user
+        self.navigationController?.pushViewController(roomController, animated: false)
     }
 
     let loginEndpoint = "http://192.168.1.59:3000/login"
+
 //    let loginEndpoint = "http://192.168.1.114:3000/login"
 
     private func doLogin(username: String) {
@@ -64,7 +82,7 @@ class LoginController: UIViewController {
 
 //        Alamofire.request(loginEndpoint, method: .post, parameters: parameters).responseString { res in
         Alamofire.request(loginEndpoint, method: .post, parameters: parameters).responseJSON { res in
-                print(res)
+            print(res)
             if let result = res.result.value as? [String: Any] {
                 guard
                         let status = result["status"] as? Int,

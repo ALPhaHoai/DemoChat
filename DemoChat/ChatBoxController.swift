@@ -10,25 +10,16 @@ import Material
 
 class ChatBoxController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     var token = ""
-    var currentRoom = Room()
+    var currentRoom = Client()
     var user = User()
-    var rooms = [[String: Any]]() {
-        didSet {
-            roomTable.reloadData()
-        }
-    }
+
     var messages = [[String: String]]() {
         didSet {
             messageTable.reloadData()
         }
     }
 
-    let roomTable: UITableView = {
-        let tableView = UITableView()
-        tableView.separatorStyle = .none
-        tableView.allowsSelection = true
-        return tableView
-    }()
+
 
     let messageTable: UITableView = {
         let tableView = UITableView()
@@ -51,17 +42,23 @@ class ChatBoxController: UIViewController, UITableViewDelegate, UITableViewDataS
     }()
 
 
-    let roomTableCellId = "cellId1"
+
     let messageTableCellId = "cellId2"
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
         setUpConnection()
+        loadMessageHistory()
     }
 
-    var socket: SocketIOClient? = nil
-    var socketManager: SocketManager? = nil
+    private func loadMessageHistory() {
+        socket!.emit("createroom", [
+            "sender": self.currentRoom.sender,
+            "receive": self.currentRoom.userID,
+            "currentRoom": self.currentRoom.roomName,
+        ])
+    }
 
     private func setUpConnection() {
         socketManager = SocketManager(socketURL: URL(string: "http://192.168.1.59:3000")!, config: [.log(true), .compress, .connectParams(["token": token])])
@@ -69,7 +66,7 @@ class ChatBoxController: UIViewController, UITableViewDelegate, UITableViewDataS
 
         socket!.on(clientEvent: .connect, callback: { data, ack in
             print("socket connected")
-            self.socket!.emit("join", self.user.id)
+            socket!.emit("join", self.user.id)
         })
         socket!.on("message") { (data, ack) in
             print(data)
@@ -92,19 +89,12 @@ class ChatBoxController: UIViewController, UITableViewDelegate, UITableViewDataS
 
 
     private func setupViews() {
-        roomTable.delegate = self
-        roomTable.dataSource = self
-        roomTable.register(RoomCell.self, forCellReuseIdentifier: roomTableCellId)
-        roomTable.backgroundColor = .blue
-
-
-        messageTable.delegate = self
+                messageTable.delegate = self
         messageTable.dataSource = self
         messageTable.register(MessageCell.self, forCellReuseIdentifier: messageTableCellId)
         messageTable.backgroundColor = .green
 
 
-        view.addSubview(roomTable)
         view.addSubview(messageTable)
 
 
@@ -136,21 +126,13 @@ class ChatBoxController: UIViewController, UITableViewDelegate, UITableViewDataS
             maker.height.lessThanOrEqualToSuperview().dividedBy(2)
             maker.height.greaterThanOrEqualToSuperview().dividedBy(3)
         }
-
-        roomTable.snp.makeConstraints { maker -> Void in
-            maker.top.equalTo(view.snp.top)
-            maker.leading.trailing.equalTo(view)
-            maker.bottom.equalTo(messageTable.snp.top).offset(10)
-            maker.height.lessThanOrEqualToSuperview().dividedBy(2)
-            maker.height.greaterThanOrEqualToSuperview().dividedBy(3)
-        }
     }
 
     @objc func sendMessage(_ sender: AnyObject?) {
         if let messageBody: String = self.messageInput.text {
             print(messageBody)
             if self.currentRoom.sender != "" {
-                socket!.emit("messagedetection", self.currentRoom.sender, self.currentRoom.recieve, self.currentRoom.name, messageBody)
+                socket!.emit("messagedetection", self.currentRoom.sender, self.currentRoom.userID, self.currentRoom.roomName, messageBody)
                 self.messageInput.text = ""
             } else {
                 showError(error: "There is no room selected")
@@ -175,34 +157,14 @@ class ChatBoxController: UIViewController, UITableViewDelegate, UITableViewDataS
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if tableView == roomTable {
-            return self.rooms.count
-        } else if tableView == messageTable {
-            return self.messages.count
-        }
-        return 0
+        return self.messages.count
     }
 
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if tableView == roomTable {
-            let item = self.rooms[indexPath.row]
-            self.currentRoom = Room(sender: self.user.id, recieve: item["User_ID"] as? String ?? "", name: item["Room_Name"] as? String ?? "")
-            socket!.emit("createroom", [
-                "sender": self.currentRoom.sender,
-                "receive": self.currentRoom.recieve,
-                "currentRoom": self.currentRoom.name,
-            ])
-        }
-    }
+
 
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if tableView == roomTable, let cell = tableView.dequeueReusableCell(withIdentifier: roomTableCellId, for: indexPath) as? RoomCell {
-            let cellData = rooms[indexPath.row]
-            cell.userid.text = cellData["User_ID"] as? String ?? ""
-            cell.roomname.text = cellData["Room_Name"] as? String ?? ""
-            return cell
-        } else if tableView == messageTable, let cell = tableView.dequeueReusableCell(withIdentifier: messageTableCellId, for: indexPath) as? MessageCell {
+        if let cell = tableView.dequeueReusableCell(withIdentifier: messageTableCellId, for: indexPath) as? MessageCell {
             let cellData = messages[indexPath.row]
             cell.nickname.text = cellData["recieve"]
             cell.message.text = cellData["message"]
@@ -215,7 +177,6 @@ class ChatBoxController: UIViewController, UITableViewDelegate, UITableViewDataS
         self.sendMessage(self)
         return true
     }
-
 
 
 }

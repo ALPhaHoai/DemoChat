@@ -3,6 +3,24 @@
 // Copyright (c) 2019 ___FULLUSERNAME___. All rights reserved.
 //
 
+
+
+struct Client {
+    var sender = ""
+    var avatar = ""
+    var roomName = ""
+    var userID = ""//recieve
+    var username = ""
+    var name = ""
+    var online = false
+    var type = 0
+
+    init() {
+    }
+
+}
+
+
 struct User {
     var username: String = ""
     var avatar: String = ""
