@@ -12,8 +12,8 @@ class RoomCell: UITableViewCell {
     let userid = UILabel()
     let name = UILabel()
 
-    let cellView: UIStackView = {
-        let view = UIStackView()
+    let cellView: UIView = {
+        let view = UIView()
         view.backgroundColor = UIColor.white
 
         view.layer.shadowColor = UIColor.black.cgColor
@@ -28,7 +28,6 @@ class RoomCell: UITableViewCell {
         view.layer.borderColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 0.5)
 
 
-        view.axis = .horizontal
 
         return view
     }()
@@ -52,6 +51,18 @@ class RoomCell: UITableViewCell {
         cellView.addSubview(userid)
         cellView.addSubview(name)
 
+        roomname.snp.makeConstraints { maker in
+            maker.leading.equalToSuperview().offset(10)
+            maker.centerY.equalToSuperview()
+        }
+        userid.snp.makeConstraints { maker in
+            maker.leading.equalTo(roomname.snp.trailing).offset(10)
+            maker.centerY.equalToSuperview()
+        }
+        name.snp.makeConstraints { maker in
+            maker.leading.equalTo(userid.snp.trailing).offset(10)
+            maker.centerY.equalToSuperview()
+        }
         cellView.snp.makeConstraints { maker -> Void in
             maker.edges.equalToSuperview().offset(10)
         }

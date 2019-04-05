@@ -3,7 +3,6 @@
 // Copyright (c) 2019 ___FULLUSERNAME___. All rights reserved.
 //
 
-import Foundation
 import UIKit
 import SnapKit
 import SocketIO
@@ -13,6 +12,7 @@ import Alamofire
 class LoginController: UIViewController {
     let loginButton: UIButton = {
         let loginButton = FlatButton(title: "Login")
+//        let loginButton = UIButton()
 //        loginButton.setTitle("Login", for: .normal)
 //        loginButton.setTitleColor(.black, for: .normal)
 //        loginButton.backgroundColor = .yellow
@@ -29,7 +29,7 @@ class LoginController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpView()
-        loginButton.addTarget(self, action: #selector(LoginController.loginButtonClicked), for: .touchUpInside)
+        loginButton.addTarget(self, action: #selector(loginButtonClicked), for: .touchUpInside)
     }
 
     @objc func loginButtonClicked(_ sender: AnyObject?) {
@@ -40,38 +40,51 @@ class LoginController: UIViewController {
 
     func goToChatRoom(token: String, users: [String: Any]) {
         let chatController = ChatBoxController()
+        if let clients = users["clients"] as? [[String: Any]]{
+            chatController.rooms = clients
+        }
+
+        let user = User(
+                username: users["Username"] as? String ?? "",
+                avatar: users["Avatar"] as? String ?? "",
+                id: users["User_ID"] as? String ?? "",
+                name: users["name"] as? String ?? "")
         chatController.token = token
-        chatController.users = users
+        chatController.user = user
         self.navigationController?.pushViewController(chatController, animated: false)
     }
 
-    let loginEndpoint = "http://192.168.1.114:3000/login"
+    let loginEndpoint = "http://192.168.1.59:3000/login"
+//    let loginEndpoint = "http://192.168.1.114:3000/login"
 
     private func doLogin(username: String) {
         let parameters = [
             "username": username,
         ]
 
+//        Alamofire.request(loginEndpoint, method: .post, parameters: parameters).responseString { res in
         Alamofire.request(loginEndpoint, method: .post, parameters: parameters).responseJSON { res in
-            if let result = res.result.value as? [String: Any]? {
+                print(res)
+            if let result = res.result.value as? [String: Any] {
                 guard
                         let status = result["status"] as? Int,
-                        status != 1,
-                        let data = result["data"] as? [String: Any]?,
+                        status == 1,
+                        let data = result["data"] as? [String: Any],
                         let token = data["token"] as? String,
                         let users = data["user"] as? [String: Any]
                         else {
                     if let message = result["message"] as? String {
-                        showError(error: message)
+                        self.showError(error: message)
                     } else {
-                        showError(error: "Unknow Error")
+                        self.showError(error: "Unknow Error")
                     }
+                    return;
                 }
 
-                goToChatRoom(token: token, users: users)
+                self.goToChatRoom(token: token, users: users)
 
             } else {
-                showError(error: "Unknow Error")
+                self.showError(error: "Unknow Error")
             }
         }
     }
