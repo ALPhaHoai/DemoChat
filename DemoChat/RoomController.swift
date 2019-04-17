@@ -107,6 +107,7 @@ class RoomController: UIViewController, UITableViewDelegate, UITableViewDataSour
             let cellData = clients[indexPath.row]
             cell.smRecievers.text = self.user.id
             cell.message.text = cellData.roomName
+            cell.createAtTime.text = "5 mins ago"
             return cell
 
         } else {

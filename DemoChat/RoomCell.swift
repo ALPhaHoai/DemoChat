@@ -87,7 +87,7 @@ class RoomCell: UITableViewCell {
 
         mainMessageBlock.snp.makeConstraints { maker in
             maker.leading.equalTo(contactImage.snp.trailing).offset(10)
-            maker.trailing.equalToSuperview().offset(10)
+            maker.trailing.equalToSuperview().offset(-10)
             maker.top.bottom.equalToSuperview()
         }
 
@@ -99,25 +99,26 @@ class RoomCell: UITableViewCell {
         smRecievers.snp.makeConstraints { maker in
             maker.leading.equalToSuperview()
             maker.top.equalToSuperview().offset(6)
-            maker.width.equalToSuperview().multipliedBy(0.6)
+            maker.width.lessThanOrEqualToSuperview().multipliedBy(0.6)
         }
 
         createAtTime.snp.makeConstraints { maker in
-            maker.trailing.equalToSuperview().offset(10)
+            maker.trailing.equalToSuperview().offset(-10)
             maker.top.equalToSuperview().offset(11)
-            maker.width.equalToSuperview().multipliedBy(0.3)
+            maker.width.lessThanOrEqualToSuperview().multipliedBy(0.3)
             maker.lastBaseline.equalTo(smRecievers.snp.lastBaseline)
         }
 
         message.snp.makeConstraints { maker in
             maker.leading.equalTo(smRecievers.snp.leading)
             maker.top.equalTo(smRecievers.snp.bottom).offset(3)
-            maker.width.equalToSuperview().multipliedBy(0.6)
+            maker.width.lessThanOrEqualToSuperview().multipliedBy(0.6)
         }
 
         unreadSmsCount.snp.makeConstraints { maker in
             maker.lastBaseline.equalTo(message.snp.lastBaseline)
             maker.trailing.equalTo(createAtTime.snp.trailing)
+            maker.width.height.equalTo(10)
         }
 
         separateLine.snp.makeConstraints { maker in
@@ -128,7 +129,8 @@ class RoomCell: UITableViewCell {
 
 
         relativeLayout.snp.makeConstraints { maker -> Void in
-            maker.edges.equalToSuperview().offset(10)
+            maker.leading.trailing.top.equalToSuperview().offset(10)
+            maker.bottom.equalToSuperview().offset(-10)
         }
     }
 
