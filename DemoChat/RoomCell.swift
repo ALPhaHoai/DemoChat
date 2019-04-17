@@ -34,10 +34,13 @@ class RoomCell: UITableViewCell {
     let smRecievers = UILabel()
     let createAtTime = UILabel()
     let message = UILabel()
-    let unreadSmsCount : UIView = {
-        let unreadSmsCount = UIView()
-        unreadSmsCount.bounds = CGRect(x: 0.0, y: 0.0, width: 16, height: 10)
-        unreadSmsCount.layer.cornerRadius = 5
+    let unreadSmsCount : UILabel = {
+        let unreadSmsCount = UILabel()
+        unreadSmsCount.text = "4"
+        unreadSmsCount.textAlignment = .center
+        unreadSmsCount.fontSize = 13
+        unreadSmsCount.textColor = .white
+        unreadSmsCount.layer.cornerRadius = 7
         unreadSmsCount.layer.backgroundColor = #colorLiteral(red: 1, green: 0.1862676254, blue: 0.1680173263, alpha: 1)
         return unreadSmsCount
     }()
@@ -72,8 +75,7 @@ class RoomCell: UITableViewCell {
             maker.width.equalTo(50)
             maker.height.equalTo(50)
             maker.leading.equalToSuperview().offset(10)
-            maker.bottom.equalToSuperview()
-            maker.top.equalToSuperview()
+            maker.centerY.equalToSuperview()
         }
 
         activeStatusCircle.snp.makeConstraints { maker in
@@ -88,7 +90,8 @@ class RoomCell: UITableViewCell {
         mainMessageBlock.snp.makeConstraints { maker in
             maker.leading.equalTo(contactImage.snp.trailing).offset(10)
             maker.trailing.equalToSuperview().offset(-10)
-            maker.top.bottom.equalToSuperview()
+            maker.top.lessThanOrEqualToSuperview()
+            maker.bottom.lessThanOrEqualToSuperview()
         }
 
         mainMessageBlock.addSubview(smRecievers)
@@ -98,7 +101,7 @@ class RoomCell: UITableViewCell {
 
         smRecievers.snp.makeConstraints { maker in
             maker.leading.equalToSuperview()
-            maker.top.equalToSuperview().offset(6)
+            maker.bottom.equalTo(contactImage.snp.centerY)
             maker.width.lessThanOrEqualToSuperview().multipliedBy(0.6)
         }
 
@@ -118,19 +121,22 @@ class RoomCell: UITableViewCell {
         unreadSmsCount.snp.makeConstraints { maker in
             maker.lastBaseline.equalTo(message.snp.lastBaseline)
             maker.trailing.equalTo(createAtTime.snp.trailing)
-            maker.width.height.equalTo(10)
+            maker.width.equalTo(24)
+            maker.height.equalTo(16)
         }
 
         separateLine.snp.makeConstraints { maker in
             maker.bottom.equalToSuperview()
             maker.trailing.equalToSuperview()
             maker.leading.equalTo(mainMessageBlock.snp.leading)
+            maker.height.equalTo(1)
         }
 
 
         relativeLayout.snp.makeConstraints { maker -> Void in
             maker.leading.trailing.top.equalToSuperview().offset(10)
-            maker.bottom.equalToSuperview().offset(-10)
+            maker.height.equalTo(80)
+            maker.bottom.equalToSuperview().offset(10)
         }
     }
 

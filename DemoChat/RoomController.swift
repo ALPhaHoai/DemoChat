@@ -85,7 +85,7 @@ class RoomController: UIViewController, UITableViewDelegate, UITableViewDataSour
         roomTable.delegate = self
         roomTable.dataSource = self
         roomTable.register(RoomCell.self, forCellReuseIdentifier: roomTableCellId)
-        roomTable.backgroundColor = .blue
+        roomTable.backgroundColor = .white
 
         view.addSubview(roomTable)
 
