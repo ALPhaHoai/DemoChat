@@ -17,8 +17,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
-        let loginController = LoginController()
-        let uinavigation = UINavigationController(rootViewController: loginController)
+        let roomController = RoomController()
+        let uinavigation = UINavigationController(rootViewController: roomController)
 //        let uinavigation = UINavigationController(rootViewController: ChatBoxController())
         uinavigation.navigationBar.backgroundColor = .white
         uinavigation.navigationBar.isTranslucent = true

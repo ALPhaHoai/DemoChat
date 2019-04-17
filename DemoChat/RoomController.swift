@@ -7,8 +7,14 @@ import SocketIO
 import UIKit
 import SnapKit
 import Material
+import Alamofire
+
+
+var socketManager: SocketManager? = nil
+public  var socket : SocketIOClient? = nil
 
 class RoomController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    let endpoint = "http://192.168.1.59:3000"
     var token = ""
     var user = User()
     var clients = [Client]() {
@@ -32,10 +38,38 @@ class RoomController: UIViewController, UITableViewDelegate, UITableViewDataSour
         super.viewDidLoad()
         setupViews()
         setUpConnection()
+        doLogin(username: "ha1")
+    }
+    
+    
+    func setupData(_ token: String, _ users: [String: Any]) {
+        self.user = User(
+            username: users["Username"] as? String ?? "",
+            avatar: users["Avatar"] as? String ?? "",
+            id: users["User_ID"] as? String ?? "",
+            name: users["name"] as? String ?? "")
+        
+        if let clients = users["clients"] as? [[String: Any]] {
+            for room in clients {
+                var client = Client()
+                client.sender = user.id
+                client.avatar = room["Avatar"] as? String ?? ""
+                client.roomName = room["Room_Name"] as? String ?? ""
+                client.userID = room["User_ID"] as? String ?? ""
+                client.username = room["Username"] as? String ?? ""
+                client.name = room["name"] as? String ?? ""
+                client.online = (room["online"] as? Int ?? 0 != 0)
+                client.type = room["type"] as? Int ?? 0
+                self.clients.append(client)
+            }
+        }
+        
+        self.token = token
     }
 
+
     private func setUpConnection() {
-        socketManager = SocketManager(socketURL: URL(string: "http://192.168.1.59:3000")!, config: [.log(true), .compress, .connectParams(["token": token])])
+        socketManager = SocketManager(socketURL: URL(string: self.endpoint)!, config: [.log(true), .compress, .connectParams(["token": token])])
         socket = socketManager!.defaultSocket
 
         socket!.on(clientEvent: .connect, callback: { data, ack in
@@ -44,7 +78,6 @@ class RoomController: UIViewController, UITableViewDelegate, UITableViewDataSour
         })
         print("socket connecting...")
         socket!.connect()
-
     }
 
 
@@ -116,5 +149,34 @@ class RoomController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
 
 
+    private func doLogin(username: String) {
+        let parameters = ["username": username]
+        Alamofire.request(endpoint + "/login", method: .post, parameters: parameters).responseJSON { res in
+            print(res)
+            if let result = res.result.value as? [String: Any] {
+                guard
+                    let status = result["status"] as? Int,
+                    status == 1,
+                    let data = result["data"] as? [String: Any],
+                    let token = data["token"] as? String,
+                    let users = data["user"] as? [String: Any]
+                    else {
+                        if let message = result["message"] as? String {
+                            self.showError(error: message)
+                        } else {
+                            self.showError(error: "Unknow Error")
+                        }
+                        return;
+                }
+                
+                self.setupData(token,  users)
+                
+            } else {
+                self.showError(error: "Unknow Error")
+            }
+        }
+    }
+    
+    
 
 }
