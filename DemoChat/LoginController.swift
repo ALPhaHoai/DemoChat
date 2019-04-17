@@ -25,7 +25,7 @@ class LoginController: UIViewController {
 
     let username: UITextField = {
         let username = UITextField()
-        username.text = "admin"
+        username.text = "ha1"
         return username
     }()
 

@@ -105,8 +105,8 @@ class RoomController: UIViewController, UITableViewDelegate, UITableViewDataSour
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: roomTableCellId, for: indexPath) as? RoomCell {
             let cellData = clients[indexPath.row]
-            cell.userid.text = self.user.id
-            cell.roomname.text = cellData.roomName
+            cell.smRecievers.text = self.user.id
+            cell.message.text = cellData.roomName
             return cell
 
         } else {
