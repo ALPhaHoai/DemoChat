@@ -6,6 +6,7 @@
 import Foundation
 import UIKit
 import SnapKit
+import SwifterSwift
 
 class RoomCell: UITableViewCell {
     let relativeLayout : UIView = {
@@ -29,7 +30,7 @@ class RoomCell: UITableViewCell {
         let contactImage = UIImageView(image: #imageLiteral(resourceName: "avatar_default"))
         return contactImage
     }()
-    let activeStatusCircle = UIImageView()
+    let activeStatusCircle = Circle()
     let mainMessageBlock = UIView()
     let smRecievers = UILabel()
     let createAtTime = UILabel()
@@ -92,6 +93,7 @@ class RoomCell: UITableViewCell {
             maker.trailing.equalToSuperview().offset(-10)
             maker.top.lessThanOrEqualToSuperview()
             maker.bottom.lessThanOrEqualToSuperview()
+
         }
 
         mainMessageBlock.addSubview(smRecievers)
