@@ -38,7 +38,7 @@ struct User {
 }
 
 
-class TriangleView : UIView {
+class SendingTriangleView : UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
@@ -61,6 +61,28 @@ class TriangleView : UIView {
     
 }
 
+class IncomingTriangleView : UIView {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func draw(_ rect: CGRect) {
+        guard let context = UIGraphicsGetCurrentContext() else {return}
+        
+        context.beginPath()
+        context.move(to: CGPoint(x: rect.minX, y: rect.maxY))
+        context.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        context.addLine(to: CGPoint(x: (rect.maxX / 2.0), y: rect.minY))
+        
+        context.setFillColor(#colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1))
+        context.fillPath()
+    }
+    
+}
 class Circle : UIView {
     override func draw(_ rect: CGRect) {
         let halfSize : CGFloat = min(bounds.size.width/2, bounds.size.height/2)

@@ -9,6 +9,9 @@ import SnapKit
 import Material
 
 class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    let INCOMING_MESSAGE_CELL = 101
+    let SENDING_MESSAGE_CELL = 102
+    
     var token = ""
     var currentRoom = Room()
     var user = User()
@@ -89,12 +92,10 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
     private func setupViews() {
         messageTable.delegate = self
         messageTable.dataSource = self
-        messageTable.register(MessageCell.self, forCellReuseIdentifier: messageTableCellId)
+        messageTable.register(ImcomingMessageCell.self, forCellReuseIdentifier: messageTableCellId)
         messageTable.backgroundColor = .green
         
-        
         view.addSubview(messageTable)
-        
         
         let sendMessageBlock = UIView()
         sendMessageBlock.backgroundColor = .yellow
@@ -112,15 +113,15 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
         
         view.addSubview(sendMessageBlock)
         sendMessageBlock.snp.makeConstraints { maker in
-            maker.leading.equalToSuperview().offset(20)
-            maker.trailing.equalToSuperview().offset(-20)
-            maker.bottom.equalToSuperview().offset(-30)
-            maker.height.equalTo(100)
+            maker.leading.equalToSuperview()
+            maker.trailing.equalToSuperview()
+            maker.bottom.equalToSuperview()
+            maker.height.equalTo(50)
         }
         
         messageTable.snp.makeConstraints { maker -> Void in
             maker.leading.trailing.equalToSuperview()
-            maker.bottom.equalTo(sendMessageBlock.snp.top).offset(-50)
+            maker.bottom.equalTo(sendMessageBlock.snp.top).offset(-10)
             maker.top.equalToSuperview()
         }
     }
@@ -135,26 +136,20 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
     
-    func showMessage(_ message: String) {
-        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-        self.present(alert, animated: true)
-        
-        // duration in seconds
-        let duration: Double = 5
-        
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + duration) {
-            alert.dismiss(animated: true)
-        }
-    }
-    
+   
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.messages.count
     }
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let cell = tableView.dequeueReusableCell(withIdentifier: messageTableCellId, for: indexPath) as? MessageCell {
-            let message = messages[indexPath.row]
+        let message = messages[indexPath.row]
+        
+        if message.incoming, let cell = tableView.dequeueReusableCell(withIdentifier: messageTableCellId, for: indexPath) as? ImcomingMessageCell {
+            //cell.nickname.text = cellData["recieve"]
+            cell.messageBody.text = message.message
+            return cell
+        } else if let cell = tableView.dequeueReusableCell(withIdentifier: messageTableCellId, for: indexPath) as? SendingMessageCell {
             //cell.nickname.text = cellData["recieve"]
             cell.messageBody.text = message.message
             return cell
@@ -166,6 +161,5 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
         self.sendMessage(self)
         return true
     }
-    
     
 }

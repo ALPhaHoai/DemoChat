@@ -60,19 +60,6 @@ class RoomListController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
     
-    
-    func showMessage(_ message: String) {
-        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-        self.present(alert, animated: true)
-        
-        // duration in seconds
-        let duration: Double = 5
-        
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + duration) {
-            alert.dismiss(animated: true)
-        }
-    }
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.RoomList.count
     }

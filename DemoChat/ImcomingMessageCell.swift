@@ -6,22 +6,23 @@
 import Foundation
 import UIKit
 import SnapKit
+import SwifterSwift
 
-class MessageCell: UITableViewCell {
+class ImcomingMessageCell: UITableViewCell {
     let cellView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.white
 
-        view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOffset = CGSize(width: 0, height: 3)
-        view.layer.shadowOpacity = 0.2
-        view.layer.shadowRadius = 1.0
-        view.layer.masksToBounds = false
-        view.clipsToBounds = false
-        view.layer.cornerRadius = 3
-
-        view.layer.borderWidth = 1
-        view.layer.borderColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 0.5)
+//        view.layer.shadowColor = UIColor.black.cgColor
+//        view.layer.shadowOffset = CGSize(width: 0, height: 3)
+//        view.layer.shadowOpacity = 0.2
+//        view.layer.shadowRadius = 1.0
+//        view.layer.masksToBounds = false
+//        view.clipsToBounds = false
+//        view.layer.cornerRadius = 3
+//
+//        view.layer.borderWidth = 1
+//        view.layer.borderColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 0.5)
 
 
         return view
@@ -32,12 +33,22 @@ class MessageCell: UITableViewCell {
         return avatar
     }()
     
-    let triangle : TriangleView = {
-        let triangle = TriangleView()
+    let triangle : UIView = {
+        let triangle = IncomingTriangleView()
         return triangle
     }()
     
-    let messageTextLayout = UIView()
+    let messageTextLayout : UIView = {
+        let messageTextLayout  = UIView()
+        messageTextLayout.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+        messageTextLayout.layer.masksToBounds = false
+        messageTextLayout.clipsToBounds = false
+        messageTextLayout.layer.cornerRadius = 10
+        //messageTextLayout.bounds = messageTextLayout.frame.insetBy(dx: -10.0, dy: -10.0)
+        
+        return messageTextLayout
+    }()
+    
     let messageImage = UIImageView()
     let messageBody = UILabel()
     
@@ -72,7 +83,15 @@ class MessageCell: UITableViewCell {
         avatar.snp.makeConstraints { maker -> Void in
             maker.width.height.equalTo(40)
             maker.top.equalToSuperview().offset(10)
-            maker.trailing.equalToSuperview()
+            maker.leading.equalToSuperview().offset(10)
+            maker.trailingMargin.equalTo(10)
+        }
+        
+        triangle.snp.makeConstraints { maker -> Void in
+            maker.width.equalTo(7)
+            maker.height.equalTo(10)
+            maker.leading.equalTo(avatar.snp.trailing).offset(10)
+            maker.top.equalToSuperview().offset(10)
         }
         
         messageTextLayout.addSubview(messageImage)
@@ -81,8 +100,8 @@ class MessageCell: UITableViewCell {
             maker.width.lessThanOrEqualToSuperview().multipliedBy(0.7)
             maker.top.equalToSuperview().offset(10)
             maker.bottom.equalToSuperview().offset(-10)
-            maker.trailing.equalTo(triangle.snp.leading).offset(-10)
-            maker.leading.lessThanOrEqualToSuperview().offset(10)
+            maker.leading.equalTo(triangle.snp.trailing).offset(0)
+            maker.trailing.lessThanOrEqualToSuperview().offset(10)
         }
         
         messageImage.snp.makeConstraints { maker -> Void in
