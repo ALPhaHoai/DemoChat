@@ -7,11 +7,11 @@ import SocketIO
 import UIKit
 import SnapKit
 import Material
+import SwifterSwift
 
 class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    let INCOMING_MESSAGE_CELL = 101
-    let SENDING_MESSAGE_CELL = 102
-    
+    let INCOMING_MESSAGE_CELL = "INCOMING_MESSAGE_CELL"
+    let SENDING_MESSAGE_CELL = "SENDING_MESSAGE_CELL"
     var token = ""
     var currentRoom = Room()
     var user = User()
@@ -21,9 +21,7 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
             messageTable.reloadData()
         }
     }
-    
-    
-    
+
     let messageTable: UITableView = {
         let tableView = UITableView()
         tableView.separatorStyle = .none
@@ -46,7 +44,7 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
     
     
     
-    let messageTableCellId = "cellId2"
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -92,8 +90,10 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
     private func setupViews() {
         messageTable.delegate = self
         messageTable.dataSource = self
-        messageTable.register(ImcomingMessageCell.self, forCellReuseIdentifier: messageTableCellId)
-        messageTable.backgroundColor = .green
+        messageTable.register(ImcomingMessageCell.self, forCellReuseIdentifier: INCOMING_MESSAGE_CELL)
+        messageTable.register(SendingMessageCell.self, forCellReuseIdentifier: SENDING_MESSAGE_CELL)
+        //messageTable.backgroundColor = .green
+        messageTable.allowsSelection = false
         
         view.addSubview(messageTable)
         
@@ -143,13 +143,19 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let message = messages[indexPath.row]
-        
-        if message.incoming, let cell = tableView.dequeueReusableCell(withIdentifier: messageTableCellId, for: indexPath) as? ImcomingMessageCell {
+        var message = messages[indexPath.row]
+        //print("message type: " + message.incoming)
+        if message.incoming, let cell = tableView.dequeueReusableCell(withIdentifier: INCOMING_MESSAGE_CELL, for: indexPath) as? ImcomingMessageCell {
+            if message.message.starts(with: "<img src=\""), message.message.ends(with: "\">") {
+                cell.messageBody.isHidden = true
+                cell.messageImage.isHidden = false
+                cell.messageImage.download(from: URL(fileURLWithPath: message.message.slice(from: "<img src=\"".count, to: message.message.count - 3)))
+            }
+            
             //cell.nickname.text = cellData["recieve"]
             cell.messageBody.text = message.message
             return cell
-        } else if let cell = tableView.dequeueReusableCell(withIdentifier: messageTableCellId, for: indexPath) as? SendingMessageCell {
+        } else if let cell = tableView.dequeueReusableCell(withIdentifier: SENDING_MESSAGE_CELL, for: indexPath) as? SendingMessageCell {
             //cell.nickname.text = cellData["recieve"]
             cell.messageBody.text = message.message
             return cell

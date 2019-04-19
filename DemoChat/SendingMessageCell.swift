@@ -15,28 +15,26 @@ class SendingMessageCell: UITableViewCell {
         let view = UIView()
         view.backgroundColor = UIColor.white
         
-        view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOffset = CGSize(width: 0, height: 3)
-        view.layer.shadowOpacity = 0.2
-        view.layer.shadowRadius = 1.0
-        view.layer.masksToBounds = false
-        view.clipsToBounds = false
-        view.layer.cornerRadius = 3
-        
-        view.layer.borderWidth = 1
-        view.layer.borderColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 0.5)
+//        view.layer.shadowColor = UIColor.black.cgColor
+//        view.layer.shadowOffset = CGSize(width: 0, height: 3)
+//        view.layer.shadowOpacity = 0.2
+//        view.layer.shadowRadius = 1.0
+//        view.layer.masksToBounds = false
+//        view.clipsToBounds = false
+//        view.layer.cornerRadius = 3
+//
+//        view.layer.borderWidth = 1
+//        view.layer.borderColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 0.5)
         
         
         return view
     }()
     
-    let avatar : UIImageView = {
-        let avatar = UIImageView(image: #imageLiteral(resourceName: "avatar_default"))
-        return avatar
-    }()
-    
     let triangle : UIView = {
-        let triangle = SendingTriangleView()
+        let triangle = TriangleView()
+        triangle.fillColor = #colorLiteral(red: 0.7450980544, green: 0.1568627506, blue: 0.07450980693, alpha: 1)
+        triangle.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0)
+        triangle.rotate(byAngle: 90, ofType: .degrees)
         return triangle
     }()
     
@@ -50,7 +48,12 @@ class SendingMessageCell: UITableViewCell {
     }()
     
     let messageImage = UIImageView()
-    let messageBody = UILabel()
+    let messageBody : UILabel = {
+        let messageBody = UILabel()
+        messageBody.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+        messageBody.padding = UIEdgeInsets(inset: 10)
+        return messageBody
+    }()
     
     
     //    override open func awakeFromNib() {
@@ -84,7 +87,7 @@ class SendingMessageCell: UITableViewCell {
             maker.width.equalTo(7)
             maker.height.equalTo(10)
             maker.trailing.equalToSuperview()
-            maker.top.equalToSuperview().offset(10)
+            maker.top.equalToSuperview().offset(15)
         }
         
         messageTextLayout.addSubview(messageImage)
@@ -93,8 +96,7 @@ class SendingMessageCell: UITableViewCell {
             maker.width.lessThanOrEqualToSuperview().multipliedBy(0.7)
             maker.top.equalToSuperview().offset(10)
             maker.bottom.equalToSuperview().offset(-10)
-            maker.trailing.equalTo(triangle.snp.leading).offset(-10)
-            maker.leading.lessThanOrEqualToSuperview().offset(10)
+            maker.trailing.equalTo(triangle.snp.leading)
         }
         
         messageImage.snp.makeConstraints { maker -> Void in

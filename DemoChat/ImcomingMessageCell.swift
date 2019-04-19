@@ -34,7 +34,10 @@ class ImcomingMessageCell: UITableViewCell {
     }()
     
     let triangle : UIView = {
-        let triangle = IncomingTriangleView()
+        let triangle = TriangleView()
+        triangle.fillColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+        triangle.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0)
+        triangle.rotate(byAngle: -90, ofType: .degrees)
         return triangle
     }()
     
@@ -50,7 +53,12 @@ class ImcomingMessageCell: UITableViewCell {
     }()
     
     let messageImage = UIImageView()
-    let messageBody = UILabel()
+    let messageBody : UILabel = {
+        let messageBody = UILabel()
+        messageBody.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+        messageBody.padding = UIEdgeInsets(inset: 10)
+        return messageBody
+    }()
     
     
 //    override open func awakeFromNib() {
@@ -91,7 +99,7 @@ class ImcomingMessageCell: UITableViewCell {
             maker.width.equalTo(7)
             maker.height.equalTo(10)
             maker.leading.equalTo(avatar.snp.trailing).offset(10)
-            maker.top.equalToSuperview().offset(10)
+            maker.top.equalToSuperview().offset(15)
         }
         
         messageTextLayout.addSubview(messageImage)

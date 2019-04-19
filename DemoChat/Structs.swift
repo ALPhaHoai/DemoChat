@@ -38,51 +38,6 @@ struct User {
 }
 
 
-class SendingTriangleView : UIView {
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func draw(_ rect: CGRect) {
-        guard let context = UIGraphicsGetCurrentContext() else {return}
-        
-        context.beginPath()
-        context.move(to: CGPoint(x: rect.minX, y: rect.maxY))
-        context.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
-        context.addLine(to: CGPoint(x: (rect.maxX / 2.0), y: rect.minY))
-        
-        context.setFillColor(#colorLiteral(red: 0.7450980544, green: 0.1568627506, blue: 0.07450980693, alpha: 1))
-        context.fillPath()
-    }
-    
-}
-
-class IncomingTriangleView : UIView {
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func draw(_ rect: CGRect) {
-        guard let context = UIGraphicsGetCurrentContext() else {return}
-        
-        context.beginPath()
-        context.move(to: CGPoint(x: rect.minX, y: rect.maxY))
-        context.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
-        context.addLine(to: CGPoint(x: (rect.maxX / 2.0), y: rect.minY))
-        
-        context.setFillColor(#colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1))
-        context.fillPath()
-    }
-    
-}
 class Circle : UIView {
     override func draw(_ rect: CGRect) {
         let halfSize : CGFloat = min(bounds.size.width/2, bounds.size.height/2)
@@ -95,5 +50,43 @@ class Circle : UIView {
         shapeLayer.lineWidth = desiredLineWidth
         
         layer.addSublayer(shapeLayer)
+    }
+}
+
+class TriangleView : UIView {
+    var _color: UIColor! = UIColor.blue
+    var _margin: CGFloat! = 0
+    
+    @IBInspectable var margin: Double {
+        get { return Double(_margin)}
+        set { _margin = CGFloat(newValue)}
+    }
+    
+    
+    @IBInspectable var fillColor: UIColor? {
+        get { return _color }
+        set{ _color = newValue }
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
+    override func draw(_ rect: CGRect) {
+        
+        guard let context = UIGraphicsGetCurrentContext() else { return }
+        
+        context.beginPath()
+        context.move(to: CGPoint(x: rect.minX + _margin, y: rect.maxY - _margin))
+        context.addLine(to: CGPoint(x: rect.maxX - _margin, y: rect.maxY - _margin))
+        context.addLine(to: CGPoint(x: (rect.maxX / 2.0), y: rect.minY + _margin))
+        context.closePath()
+        
+        context.setFillColor(_color.cgColor)
+        context.fillPath()
     }
 }
