@@ -58,9 +58,11 @@ class MessageCell: UITableViewCell {
     }()
     let messageBody : UILabel = {
         let messageBody = UILabel()
-        //messageBody.contentMode = .scaleToFill
+//        messageBody.contentMode = .scaleToFill
         messageBody.padding = UIEdgeInsets(inset: 10)
-        messageBody.sizeToFit()
+//        messageBody.sizeToFit()
+//        messageBody.minimumScaleFactor = 0.5
+//        messageBody.lineBreakMode = .byClipping
         messageBody.numberOfLines = 0
         //messageBody.backgroundColor = .blue
         return messageBody
@@ -68,7 +70,6 @@ class MessageCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
         
         backgroundColor = .clear
         addSubview(cellView)
@@ -89,18 +90,18 @@ class MessageCell: UITableViewCell {
             maker.height.equalTo(10)
             maker.top.equalToSuperview().offset(15)
         }
-        
         messageTextLayout.snp.makeConstraints { maker -> Void in
-            //maker.width.lessThanOrEqualToSuperview().multipliedBy(0.7)
+            maker.width.lessThanOrEqualToSuperview().multipliedBy(0.7)
             maker.top.equalToSuperview().offset(10)
             maker.bottom.equalToSuperview().offset(-10)
         }
         messageImage.snp.makeConstraints { maker -> Void in
-            maker.top.equalToSuperview().offset(10)
-            maker.bottom.equalToSuperview().offset(-10)
+            maker.top.equalTo(messageTextLayout.snp.top).offset(10)
+            maker.bottom.equalTo(messageTextLayout.snp.bottom).offset(-10)
         }
+        
         messageBody.snp.makeConstraints { maker -> Void in
-            maker.edges.equalToSuperview()
+            maker.edges.equalTo(messageTextLayout)
         }
     }
     required init?(coder aDecoder: NSCoder) {
@@ -113,8 +114,9 @@ class MessageCell: UITableViewCell {
             self.messageImage.isHidden = false
             self.messageImage.download(from: URL(fileURLWithPath: messageImage), placeholder: #imageLiteral(resourceName: "avatar_default"))
         } else {
-            self.messageBody.text = message.message.trimmingCharacters(in: .whitespacesAndNewlines)
+            self.messageBody.text = message.message
         }
+        setNeedsDisplay()
     }
     override func prepareForReuse(){
         super.prepareForReuse()
@@ -145,8 +147,9 @@ class ImcomingMessageCell: MessageCell{
         }
         messageTextLayout.snp.makeConstraints { maker -> Void in
             maker.leading.equalTo(triangle.snp.trailing).offset(0)
-            //maker.trailing.lessThanOrEqualToSuperview().offset(10)
+//            maker.trailing.lessThanOrEqualToSuperview().offset(-30)
         }
+       
         messageImage.snp.makeConstraints { maker -> Void in
             maker.leading.equalToSuperview().offset(10)
             maker.trailing.equalToSuperview().offset(-10)

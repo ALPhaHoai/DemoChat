@@ -9,18 +9,14 @@ import SnapKit
 import Material
 import SwifterSwift
 
-class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
     let INCOMING_MESSAGE_CELL = "INCOMING_MESSAGE_CELL"
     let SENDING_MESSAGE_CELL = "SENDING_MESSAGE_CELL"
     var token = ""
     var currentRoom = Room()
     var user = User()
     
-    var messages = [Message]() {
-        didSet {
-            messageTable.reloadData()
-        }
-    }
+    var messages = [Message]()
     
     let messageTable: UITableView = {
         let tableView = UITableView()
@@ -29,20 +25,26 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
         return tableView
     }()
     
+    let btnCamera: UIImageView = {
+        let btnCamera = UIImageView()
+        return btnCamera
+    }()
+    
+    let btnGallery: UIImageView = {
+        let btnGallery = UIImageView()
+        return btnGallery
+    }()
+    
+    let btnAttachment: UIImageView = {
+        let btnAttachment = UIImageView()
+        return btnAttachment
+    }()
     
     let messageInput: UITextField = {
         let messageInput = UITextField()
-        messageInput.placeholder = "write your message"
+        messageInput.placeholder = "Aa"
         return messageInput
     }()
-    
-    
-    let sendButton: UIButton = {
-        let sendButton = FlatButton(title: "Send")
-        return sendButton
-    }()
-    
-    
     
     
     
@@ -74,6 +76,7 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
                         newMessage.time = message["time"] as? Int ?? 0
                         self.messages.append(newMessage)
                     }
+                    self.messageTable.reloadData()
                 } else {
                     var newMessage = Message()
                     newMessage.nickname = response["sender"] as? String ?? " "
@@ -81,6 +84,7 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
                     newMessage.incoming = newMessage.nickname == self.user.User_ID
                     newMessage.time = response["time"] as? Int ?? 0
                     self.messages.append(newMessage)
+                    self.messageTable.reloadData()
                 }
             }
         }
@@ -90,6 +94,7 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
     private func setupViews() {
         messageTable.delegate = self
         messageTable.dataSource = self
+        messageInput.delegate = self
         messageTable.register(ImcomingMessageCell.self, forCellReuseIdentifier: INCOMING_MESSAGE_CELL)
         messageTable.register(SendingMessageCell.self, forCellReuseIdentifier: SENDING_MESSAGE_CELL)
         //messageTable.backgroundColor = .green
@@ -98,18 +103,13 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
         view.addSubview(messageTable)
         
         let sendMessageBlock = UIView()
-        sendMessageBlock.backgroundColor = .yellow
+        sendMessageBlock.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
         sendMessageBlock.addSubview(messageInput)
-        sendMessageBlock.addSubview(sendButton)
-        sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
         messageInput.snp.makeConstraints { maker in
             maker.leading.equalToSuperview()
             maker.centerY.equalToSuperview()
         }
-        sendButton.snp.makeConstraints { maker in
-            maker.leading.equalTo(messageInput.snp.trailing).offset(10)
-            maker.centerY.equalToSuperview()
-        }
+        
         
         view.addSubview(sendMessageBlock)
         sendMessageBlock.snp.makeConstraints { maker in
@@ -132,6 +132,7 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
             
             socket!.emit("messagedetection", self.user.User_ID, self.currentRoom.UserID, self.currentRoom.RoomName, messageBody)
             self.messageInput.text = ""
+            self.messageTable.scrollToBottom()
             
         }
     }
