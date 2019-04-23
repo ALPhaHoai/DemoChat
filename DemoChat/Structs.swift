@@ -10,6 +10,16 @@ struct Message {
     var message = ""
     var incoming = false
     var time = 0
+    
+    var messageImage : String? {
+        if message.starts(with: "<img src=\""), message.ends(with: "\">") {
+            var url = message
+            url.slice(from: "<img src=\"".count, to: url.count - 2)
+            return url
+        }
+        return nil
+    }
+    
     init() {
     }
 }

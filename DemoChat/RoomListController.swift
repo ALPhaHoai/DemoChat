@@ -52,12 +52,19 @@ class RoomListController: UIViewController, UITableViewDelegate, UITableViewData
         roomTable.dataSource = self
         roomTable.register(RoomCell.self, forCellReuseIdentifier: roomTableCellId)
         roomTable.backgroundColor = .white
+        roomTable.allowsSelection = true
         
         view.addSubview(roomTable)
         
         roomTable.snp.makeConstraints { maker -> Void in
             maker.edges.equalToSuperview()
         }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        roomTable.deselectAllItems(animated: false)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

@@ -107,3 +107,20 @@ class MyTextFieldPadding: UITextField {
     }
 }
 
+extension UITableView {
+    func deselectAllItems(animated: Bool){
+        guard let selectedRows = indexPathsForSelectedRows else {
+            return
+        }
+        for indexPath in selectedRows {
+            deselectRow(at: indexPath, animated: animated)
+        }
+    }
+    
+    func updateCell(at indexPath: IndexPath){
+        beginUpdates()
+        reloadRows(at: [indexPath], with: .none)
+        endUpdates()
+    }
+}
+

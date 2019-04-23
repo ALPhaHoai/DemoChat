@@ -21,7 +21,7 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
             messageTable.reloadData()
         }
     }
-
+    
     let messageTable: UITableView = {
         let tableView = UITableView()
         tableView.separatorStyle = .none
@@ -75,12 +75,12 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
                         self.messages.append(newMessage)
                     }
                 } else {
-                        var newMessage = Message()
-                        newMessage.nickname = response["sender"] as? String ?? " "
-                        newMessage.message = response["message"] as? String ?? " "
-                        newMessage.incoming = newMessage.nickname == self.user.User_ID
-                        newMessage.time = response["time"] as? Int ?? 0
-                        self.messages.append(newMessage)
+                    var newMessage = Message()
+                    newMessage.nickname = response["sender"] as? String ?? " "
+                    newMessage.message = response["message"] as? String ?? " "
+                    newMessage.incoming = newMessage.nickname == self.user.User_ID
+                    newMessage.time = response["time"] as? Int ?? 0
+                    self.messages.append(newMessage)
                 }
             }
         }
@@ -136,28 +136,19 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
     
-   
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.messages.count
     }
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var message = messages[indexPath.row]
-        //print("message type: " + message.incoming)
+        let message = messages[indexPath.row]
         if message.incoming, let cell = tableView.dequeueReusableCell(withIdentifier: INCOMING_MESSAGE_CELL, for: indexPath) as? ImcomingMessageCell {
-            if message.message.starts(with: "<img src=\""), message.message.ends(with: "\">") {
-                cell.messageBody.isHidden = true
-                cell.messageImage.isHidden = false
-                cell.messageImage.download(from: URL(fileURLWithPath: message.message.slice(from: "<img src=\"".count, to: message.message.count - 3)))
-            }
-            
-            //cell.nickname.text = cellData["recieve"]
-            cell.messageBody.text = message.message
+            cell.setUpData(message: message)
             return cell
         } else if let cell = tableView.dequeueReusableCell(withIdentifier: SENDING_MESSAGE_CELL, for: indexPath) as? SendingMessageCell {
-            //cell.nickname.text = cellData["recieve"]
-            cell.messageBody.text = message.message
+            cell.setUpData(message: message)
             return cell
         }
         return UITableViewCell()
