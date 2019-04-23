@@ -26,24 +26,42 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
     }()
     
     let btnCamera: UIImageView = {
-        let btnCamera = UIImageView()
+        let btnCamera = UIImageView(image: #imageLiteral(resourceName: "camera"))
+        btnCamera.isUserInteractionEnabled = true
         return btnCamera
     }()
     
     let btnGallery: UIImageView = {
-        let btnGallery = UIImageView()
+        let btnGallery = UIImageView(image: #imageLiteral(resourceName: "gallery"))
+        btnGallery.isUserInteractionEnabled = true
         return btnGallery
     }()
     
     let btnAttachment: UIImageView = {
-        let btnAttachment = UIImageView()
+        let btnAttachment = UIImageView(image: #imageLiteral(resourceName: "attachment"))
+        btnAttachment.isUserInteractionEnabled = true
         return btnAttachment
     }()
     
     let messageInput: UITextField = {
         let messageInput = UITextField()
+        messageInput.layer.borderWidth = 1
+        messageInput.layer.borderColor = #colorLiteral(red: 0.3893361358, green: 0.3893361358, blue: 0.3893361358, alpha: 0.6355147688)
+        messageInput.layer.cornerRadius = 20
+        messageInput.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
         messageInput.placeholder = "Aa"
+        
+        let paddingView: UIView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: 20))
+        messageInput.leftView = paddingView
+        messageInput.leftViewMode = .always
+        
         return messageInput
+    }()
+    
+    let sendMessageBlock: UIView = {
+        let sendMessageBlock = UIView()
+        sendMessageBlock.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+        return sendMessageBlock
     }()
     
     
@@ -99,26 +117,49 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
         messageTable.register(SendingMessageCell.self, forCellReuseIdentifier: SENDING_MESSAGE_CELL)
         //messageTable.backgroundColor = .green
         messageTable.allowsSelection = false
+        btnCamera.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(btnCameraTapDetected)))
+        btnGallery.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(btnGalleryTapDetected)))
+        btnAttachment.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(btnAttachmentTapDetected)))
+        
         
         view.addSubview(messageTable)
+        view.addSubview(sendMessageBlock)
         
-        let sendMessageBlock = UIView()
-        sendMessageBlock.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+        sendMessageBlock.addSubview(btnCamera)
+        sendMessageBlock.addSubview(btnGallery)
+        sendMessageBlock.addSubview(btnAttachment)
         sendMessageBlock.addSubview(messageInput)
-        messageInput.snp.makeConstraints { maker in
-            maker.leading.equalToSuperview()
+        
+        let iconSize = 30
+        
+        btnCamera.snp.makeConstraints { maker in
+            maker.width.height.equalTo(iconSize)
+            maker.leading.equalToSuperview().offset(15)
             maker.centerY.equalToSuperview()
         }
+        btnGallery.snp.makeConstraints { maker in
+            maker.width.height.equalTo(iconSize)
+            maker.leading.equalTo(btnCamera.snp.trailing).offset(5)
+            maker.centerY.equalToSuperview()
+        }
+        btnAttachment.snp.makeConstraints { maker in
+            maker.width.height.equalTo(iconSize)
+            maker.leading.equalTo(btnGallery.snp.trailing).offset(5)
+            maker.centerY.equalToSuperview()
+        }
+        messageInput.snp.makeConstraints { maker in
+            maker.leading.equalTo(btnAttachment.snp.trailing).offset(15)
+            maker.trailing.equalToSuperview().offset(-15)
+            maker.centerY.equalToSuperview()
+            maker.height.equalTo(40)
+        }
         
-        
-        view.addSubview(sendMessageBlock)
         sendMessageBlock.snp.makeConstraints { maker in
             maker.leading.equalToSuperview()
             maker.trailing.equalToSuperview()
             maker.bottom.equalToSuperview()
-            maker.height.equalTo(50)
+            maker.height.equalTo(65)
         }
-        
         messageTable.snp.makeConstraints { maker -> Void in
             maker.leading.trailing.equalToSuperview()
             maker.bottom.equalTo(sendMessageBlock.snp.top).offset(-10)
@@ -158,6 +199,18 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.sendMessage(self)
         return true
+    }
+    
+    @objc func btnCameraTapDetected(){
+        showMessage("btnCameraTapDetected Clicked")
+    }
+    
+    @objc func btnGalleryTapDetected(){
+        showMessage("btnGalleryTapDetected Clicked")
+    }
+    
+    @objc func btnAttachmentTapDetected(){
+        showMessage("btnAttachmentTapDetected Clicked")
     }
     
 }
