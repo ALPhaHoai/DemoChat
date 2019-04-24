@@ -8,8 +8,10 @@ import UIKit
 import SnapKit
 import Material
 import SwifterSwift
+import Alamofire
+import MobileCoreServices
 
-class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
+class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIDocumentPickerDelegate {
     let INCOMING_MESSAGE_CELL = "INCOMING_MESSAGE_CELL"
     let SENDING_MESSAGE_CELL = "SENDING_MESSAGE_CELL"
     var token = ""
@@ -64,8 +66,6 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
         return sendMessageBlock
     }()
     
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
@@ -117,9 +117,11 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
         messageTable.register(SendingMessageCell.self, forCellReuseIdentifier: SENDING_MESSAGE_CELL)
         //messageTable.backgroundColor = .green
         messageTable.allowsSelection = false
+        
         btnCamera.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(btnCameraTapDetected)))
         btnGallery.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(btnGalleryTapDetected)))
         btnAttachment.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(btnAttachmentTapDetected)))
+        
         
         
         view.addSubview(messageTable)
@@ -202,15 +204,82 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     @objc func btnCameraTapDetected(){
-        showMessage("btnCameraTapDetected Clicked")
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+            let imagePicker = UIImagePickerController()
+            imagePicker.delegate = self
+            imagePicker.sourceType = .camera
+            imagePicker.allowsEditing = true
+            present(imagePicker, animated: true)
+        } else {
+            showMessage("camera is not avaiable")
+        }
     }
     
     @objc func btnGalleryTapDetected(){
-        showMessage("btnGalleryTapDetected Clicked")
+        if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
+            let imagePicker = UIImagePickerController()
+            imagePicker.delegate = self
+            imagePicker.sourceType = .photoLibrary
+            imagePicker.allowsEditing = true
+            present(imagePicker, animated: true)
+        } else {
+            showMessage("gallery is not avaiable")
+        }
     }
     
     @objc func btnAttachmentTapDetected(){
-        showMessage("btnAttachmentTapDetected Clicked")
+        let documentPicker  = UIDocumentPickerViewController(documentTypes: [String(kUTTypeText), String(kUTTypeImage), String(kUTTypeVideo)], in: .import)
+        documentPicker.delegate = self
+        documentPicker.modalPresentationStyle = .formSheet
+        self.present(documentPicker, animated: true, completion: nil)
     }
     
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        guard let image = info[.editedImage] as? UIImage,
+        let url = info[.imageURL] as? URL else {
+            showMessage("No image found")
+            return
+        }
+        uploadImage(image: image, fileName: url.lastPathComponent)
+        picker.dismiss(animated: true, completion: nil)
+    }
+    func uploadImage(image: UIImage, fileName: String){
+        let imgData = image.jpegData(compressionQuality: 0.2)!
+        Alamofire.upload(multipartFormData: { (MultipartFormData) in
+            MultipartFormData.append(imgData, withName: "eupchat_file", fileName: fileName, mimeType: "image/*")
+        }, to: endpoint + "/upload") { (result) in
+            switch result {
+            case .success(let upload, _, _):
+                upload.responseJSON { response in
+                    if let err = response.error {
+                        self.showMessage("upload error \(err.localizedDescription)")
+                    } else {
+                        guard let result = response.result.value as? [String: Any],
+                            let status = result["status"] as? Int,
+                            status == 1,
+                            let data = result["data"] as? [String: Any],
+                            let message = data["message"] as? String
+                            else { return }
+                        
+                        var newMessage = Message()
+                        newMessage.nickname = self.user.User_ID
+                        newMessage.message = message
+                        newMessage.incoming = false
+                        newMessage.time = Date().timeIntervalSince1970.int
+                        self.messages.append(newMessage)
+                        self.messageTable.reloadData()
+                        self.messageTable.scrollToBottom()
+                    }
+                }
+                
+            case .failure(let err):
+                self.showMessage("upload error \(err.localizedDescription)")
+            }
+            
+        }
+    }
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL){
+        let myUrl = url as URL
+        print("import result : \(myUrl)")
+    }
 }

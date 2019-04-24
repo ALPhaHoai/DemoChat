@@ -13,9 +13,9 @@ import SwifterSwift
 
 var socketManager: SocketManager? = nil
 public  var socket : SocketIOClient? = nil
+public let endpoint = "http://192.168.1.59:3000"
 
 class RoomListController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    let endpoint = "http://192.168.1.59:3000"
     var token = ""
     var user = User()
     var RoomList = [Room]() {
@@ -97,7 +97,12 @@ class RoomListController: UIViewController, UITableViewDelegate, UITableViewData
             cell.smRecievers.text = room.RoomName + " : "
             cell.createAtTime.text = room.UserID
             cell.message.text = room.Name
-            cell.contactImage.download(from: URL(fileURLWithPath: room.Avatar), placeholder: #imageLiteral(resourceName: "avatar_default"))
+            
+            if let url = URL(string: room.Avatar) {
+                cell.contactImage.download(from: url, placeholder: #imageLiteral(resourceName: "avatar_default"))
+            } else {
+                cell.contactImage.image = #imageLiteral(resourceName: "avatar_default")
+            }
             
             if room.page != 0 {
                 cell.unreadSmsCount.isHidden = true
@@ -187,7 +192,7 @@ class RoomListController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     private func createConnection() {
-        socketManager = SocketManager(socketURL: URL(string: self.endpoint)!, config: [.log(true), .compress, .connectParams(["token": token])])
+        socketManager = SocketManager(socketURL: URL(string: endpoint)!, config: [.log(true), .compress, .connectParams(["token": token])])
         socket = socketManager!.defaultSocket
         print("socket connecting...")
         socket!.connect()
