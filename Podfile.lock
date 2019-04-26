@@ -1,5 +1,6 @@
 PODS:
   - Alamofire (4.8.2)
+  - Floaty (4.2.0)
   - Material (2.16.4):
     - Material/Core (= 2.16.4)
   - Material/Core (2.16.4):
@@ -31,6 +32,7 @@ PODS:
 
 DEPENDENCIES:
   - Alamofire (~> 4.8.2)
+  - Floaty (~> 4.2.0)
   - Material (~> 2.16)
   - SnapKit (~> 4.0.0)
   - Socket.IO-Client-Swift (~> 14.0.0)
@@ -39,6 +41,7 @@ DEPENDENCIES:
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - Alamofire
+    - Floaty
     - Material
     - Motion
     - SnapKit
@@ -48,6 +51,7 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   Alamofire: ae5c501addb7afdbb13687d7f2f722c78734c2d3
+  Floaty: e2bd5a0f6f7f70899e26ff2da31081c8bee8d1b0
   Material: 4ed78690b09ffd148b5ffab6b4367fb1d8da1cd3
   Motion: 153ba49692997888556c7a95207278a8b1f8be95
   SnapKit: 0de968a9fec17499afa29683b05d0c775b6d1c29
@@ -55,6 +59,6 @@ SPEC CHECKSUMS:
   Starscream: ef3ece99d765eeccb67de105bfa143f929026cf5
   SwifterSwift: 812ffec6f301922f5430e75be3f2939ea3a80024
 
-PODFILE CHECKSUM: cd8838596ebd102d53dfd62d1411d1729ee26176
+PODFILE CHECKSUM: 4b53957d8110f7c7af9f43d631aa3df304c7c210
 
 COCOAPODS: 1.6.1

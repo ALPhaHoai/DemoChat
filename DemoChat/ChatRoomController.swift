@@ -10,6 +10,7 @@ import Material
 import SwifterSwift
 import Alamofire
 import MobileCoreServices
+import Floaty
 
 class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIDocumentPickerDelegate {
     let INCOMING_MESSAGE_CELL = "INCOMING_MESSAGE_CELL"
@@ -64,6 +65,17 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
         let sendMessageBlock = UIView()
         sendMessageBlock.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
         return sendMessageBlock
+    }()
+    
+    let fab: FABButton = {
+        let fab = FABButton(image: #imageLiteral(resourceName: "down_arrow"), tintColor: .white)
+        fab.pulseColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)
+        fab.backgroundColor = .white
+        //        fab.layer.cornerRadius = 20
+        //        fab.backgroundColor = .white
+        //        fab.borderWidth =
+                fab.isHidden = true
+        return fab
     }()
     
     override func viewDidLoad() {
@@ -121,11 +133,12 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
         btnCamera.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(btnCameraTapDetected)))
         btnGallery.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(btnGalleryTapDetected)))
         btnAttachment.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(btnAttachmentTapDetected)))
-        
+        fab.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(fabTaped)))
         
         
         view.addSubview(messageTable)
         view.addSubview(sendMessageBlock)
+        view.addSubview(fab)
         
         sendMessageBlock.addSubview(btnCamera)
         sendMessageBlock.addSubview(btnGallery)
@@ -167,6 +180,12 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
             maker.bottom.equalTo(sendMessageBlock.snp.top).offset(-10)
             maker.top.equalToSuperview()
         }
+        
+        fab.snp.makeConstraints { maker in
+            maker.width.height.equalTo(50)
+            maker.centerX.equalToSuperview()
+            maker.bottom.equalTo(sendMessageBlock.snp.top).offset(-3)
+        }
     }
     
     @objc func sendMessage(_ sender: AnyObject?) {
@@ -175,7 +194,7 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
             
             socket!.emit("messagedetection", self.user.User_ID, self.currentRoom.UserID, self.currentRoom.RoomName, messageBody)
             self.messageInput.text = ""
-//            self.messageTable.scrollToBottom()
+            //            self.messageTable.scrollToBottom()
             
         }
     }
@@ -197,6 +216,21 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
         }
         return UITableViewCell()
     }
+    
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        
+        let height = scrollView.frame.size.height
+        let contentYoffSet = scrollView.contentOffset.y
+        let distanceFromBottom = scrollView.contentSize.height - contentYoffSet
+        
+        if distanceFromBottom < height + 200 || targetContentOffset.pointee.y < scrollView.contentOffset.y -  200 {//reach bottom or going up
+            fab.fadeOut()
+        } else if targetContentOffset.pointee.y > scrollView.contentOffset.y +  200{//going down
+            fab.isHidden = false
+            fab.fadeIn()
+        }
+    }
+    
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.sendMessage(self)
@@ -236,9 +270,9 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         guard let image = info[.editedImage] as? UIImage,
-        let url = info[.imageURL] as? URL else {
-            showMessage("No image found")
-            return
+            let url = info[.imageURL] as? URL else {
+                showMessage("No image found")
+                return
         }
         uploadImage(image: image, fileName: url.lastPathComponent)
         picker.dismiss(animated: true, completion: nil)
@@ -268,7 +302,7 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
                         newMessage.time = Date().timeIntervalSince1970.int
                         self.messages.append(newMessage)
                         self.messageTable.reloadData()
-//                        self.messageTable.scrollToBottom()
+                        //                        self.messageTable.scrollToBottom()
                     }
                 }
                 
@@ -283,5 +317,14 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
         print("import result : \(myUrl)")
     }
     
-   
+    
+    @objc func fabTaped(){
+        fab.fadeOut()
+//        let lastRow: Int = self.messageTable.numberOfRows() - 1
+//        let indexPath = IndexPath(row: lastRow, section: 0)
+//        messageTable.scrollToRow(at: indexPath, at: .top, animated: false)
+        messageTable.scrollToBottom()
+        fab.fadeOut()
+    }
+    
 }
