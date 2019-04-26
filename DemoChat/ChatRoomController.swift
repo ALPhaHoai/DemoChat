@@ -282,4 +282,6 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
         let myUrl = url as URL
         print("import result : \(myUrl)")
     }
+    
+   
 }

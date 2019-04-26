@@ -56,6 +56,8 @@ class MessageCell: UITableViewCell {
         return messageBody
     }()
     
+    
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -76,7 +78,7 @@ class MessageCell: UITableViewCell {
         triangle.snp.makeConstraints { maker -> Void in
             maker.width.equalTo(7)
             maker.height.equalTo(10)
-            maker.top.equalToSuperview().offset(15)
+            maker.top.equalToSuperview().offset(20)
         }
         messageLayout.snp.makeConstraints { maker -> Void in
             maker.width.lessThanOrEqualToSuperview().multipliedBy(0.7)
@@ -84,12 +86,12 @@ class MessageCell: UITableViewCell {
             maker.bottom.equalToSuperview().offset(-10)
         }
         messageImage.snp.makeConstraints { maker -> Void in
-            maker.leading.top.equalToSuperview().offset(10)
-            maker.trailing.bottom.equalToSuperview().offset(-10)
+            maker.leading.top.equalToSuperview().offset(10).priority(.high)
+            maker.trailing.bottom.equalToSuperview().offset(-10).priority(.high)
         }
         messageBody.snp.makeConstraints { maker -> Void in
-            maker.top.leading.equalToSuperview().offset(10)
-            maker.bottom.trailing.equalToSuperview().offset(-10)
+            maker.top.leading.equalToSuperview().offset(10).priority(.high)
+            maker.bottom.trailing.equalToSuperview().offset(-10).priority(.high)
         }
     }
     required init?(coder aDecoder: NSCoder) {
@@ -138,7 +140,7 @@ class ImcomingMessageCell: MessageCell{
         
         avatar.isHidden = false
         triangle.fillColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
-        triangle.rotate(byAngle: -90, ofType: .degrees)
+        triangle.rotate(byAngle: -110, ofType: .degrees)
         messageBody.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
         messageLayout.backgroundColor = triangle.fillColor
     }
@@ -162,8 +164,10 @@ class SendingMessageCell: MessageCell {
         
         avatar.isHidden = true
         triangle.fillColor = #colorLiteral(red: 0.7450980544, green: 0.1568627506, blue: 0.07450980693, alpha: 1)
-        triangle.rotate(byAngle: 90, ofType: .degrees)
+        triangle.rotate(byAngle: 110, ofType: .degrees)
         messageBody.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
         messageLayout.backgroundColor = triangle.fillColor
     }
+    
+    
 }
