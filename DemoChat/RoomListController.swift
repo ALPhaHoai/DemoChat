@@ -31,19 +31,21 @@ class RoomListController: UIViewController, UITableViewDelegate, UITableViewData
         return tableView
     }()
     
+    let searchIcon = UIImageView(image: #imageLiteral(resourceName: "search"))
+    
+    
     let searchInput: UITextField = {
-        let messageInput = UITextField()
-        messageInput.layer.borderWidth = 1
-        messageInput.layer.borderColor = #colorLiteral(red: 0.3893361358, green: 0.3893361358, blue: 0.3893361358, alpha: 0.6355147688)
-        messageInput.layer.cornerRadius = 40
-        messageInput.backgroundColor = #colorLiteral(red: 0.501960814, green: 0.501960814, blue: 0.501960814, alpha: 1)
-        messageInput.placeholder = "Tìm kiếm"
-        
-        let paddingView: UIView = UIImageView(image: #imageLiteral(resourceName: <#T##String#>))
-        messageInput.leftView = paddingView
-        messageInput.leftViewMode = .always
-        
-        return messageInput
+        let searchInput = UITextField()
+        searchInput.layer.borderWidth = 1
+        searchInput.layer.borderColor = #colorLiteral(red: 0.3893361358, green: 0.3893361358, blue: 0.3893361358, alpha: 0.6355147688)
+        searchInput.layer.cornerRadius = 18
+        searchInput.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+        searchInput.placeholder = "Tìm kiếm"
+        searchInput.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 70, height: 30))
+        searchInput.rightView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 30))
+        searchInput.leftViewMode = .always
+        searchInput.rightViewMode = .always
+        return searchInput
     }()
     
     let roomTableCellId = "cellId1"
@@ -61,22 +63,27 @@ class RoomListController: UIViewController, UITableViewDelegate, UITableViewData
         roomTable.register(RoomCell.self, forCellReuseIdentifier: roomTableCellId)
         roomTable.backgroundColor = .white
         roomTable.allowsSelection = true
-        roomTable.tableHeaderView = searchInput
         
-
-        view.addSubview(roomTable)
         view.addSubview(searchInput)
+        view .addSubview(searchIcon)
+        view.addSubview(roomTable)
         
         searchInput.snp.makeConstraints { maker in
-            maker.leading.equalTo(view.snp.leading).offset(10)
-            maker.trailing.equalTo(view.snp.trailing).offset(-10)
+            maker.leading.equalTo(view.snp.leading).offset(30)
+            maker.trailing.equalTo(view.snp.trailing).offset(-30)
             maker.top.equalTo(view.snp.top).offset(100)
-            maker.height.equalTo(80)
+            maker.height.equalTo(35)
         }
         
         roomTable.snp.makeConstraints { maker in
             maker.leading.trailing.bottom.equalToSuperview()
             maker.top.equalTo(searchInput.snp.bottom)
+        }
+        
+        searchIcon.snp.makeConstraints { maker in
+            maker.centerY.equalTo(searchInput.snp.centerY)
+            maker.width.height.equalTo(30)
+            maker.leading.equalTo(searchInput.snp.leading).offset(20)
         }
     }
     
