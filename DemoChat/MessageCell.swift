@@ -101,7 +101,7 @@ class MessageCell: UITableViewCell {
             self.messageImage.isHidden = false
             self.messageImage.download(url: messageImage, placeholder: #imageLiteral(resourceName: "avatar_default"))
         } else {
-            self.messageBody.text = message.message
+            self.messageBody.text = message.messageFileName ?? message.message
         }
     }
 }

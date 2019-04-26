@@ -19,20 +19,19 @@ struct Message {
         }
         return nil
     }
+    
     var messageFile : String? {
         if message.starts(with: "<a href=\""), message.ends(with: "</a>") {
-            var url : String = message[message.index(after: message.indexOf("<a href=\""))]  ?? ""
-            url = url.slicing(from: <#T##Int#>, length: <#T##Int#>)
-            return url
+            var fileUrl = message.components(separatedBy: "<a href=\"")[1]
+            fileUrl = fileUrl.components(separatedBy: "\">")[1]
+            return fileUrl
         }
         return nil
     }
-    
     var messageFileName : String? {
-        if messageFile != nil {
-            var fileName : String = message.nsString.substring(from: message.charactersArray..lastIndex(of: "\">") + 3)
-            fileName.slice(from: 0, to: fileName.count - 3)
-            
+        if message.starts(with: "<a href=\""), message.ends(with: "</a>") {
+            var fileName = message.components(separatedBy: "\">")[1]
+            fileName = fileName.components(separatedBy: "</a>")[0]
             return fileName
         }
         return nil
