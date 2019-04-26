@@ -6,8 +6,18 @@
 //  Copyright © 2019 bruce. All rights reserved.
 //
 
-import Foundation
+import SwifterSwift
 import UIKit
+
+extension UIImageView {
+    func download(url: String, placeholder: UIImage){
+        if let u = URL(string: url) {
+            self.download(from: u, placeholder: placeholder)
+        } else {
+            self.image = placeholder
+        }
+    }
+}
 
 extension UIViewController {
     func showMessage(_ message: String) {

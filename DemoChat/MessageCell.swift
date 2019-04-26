@@ -12,7 +12,6 @@ class MessageCell: UITableViewCell {
     let cellView: UIView = {
         let cellView = UIView()
         cellView.backgroundColor = .clear
-        
         return cellView
     }()
     
@@ -48,7 +47,7 @@ class MessageCell: UITableViewCell {
     let messageBody : UILabel = {
         let messageBody = UILabel()
         //        messageBody.contentMode = .scaleToFill
-        messageBody.padding = UIEdgeInsets(inset: 10)
+        //        messageBody.padding = UIEdgeInsets(inset: 10)
         //        messageBody.sizeToFit()
         //        messageBody.minimumScaleFactor = 0.5
         //        messageBody.lineBreakMode = .byClipping
@@ -84,15 +83,13 @@ class MessageCell: UITableViewCell {
             maker.top.equalToSuperview().offset(10)
             maker.bottom.equalToSuperview().offset(-10)
         }
-        
         messageImage.snp.makeConstraints { maker -> Void in
             maker.leading.top.equalToSuperview().offset(10)
             maker.trailing.bottom.equalToSuperview().offset(-10)
         }
-        
         messageBody.snp.makeConstraints { maker -> Void in
-            maker.top.equalToSuperview()
-            maker.bottom.equalToSuperview()
+            maker.top.leading.equalToSuperview().offset(10)
+            maker.bottom.trailing.equalToSuperview().offset(-10)
         }
     }
     required init?(coder aDecoder: NSCoder) {
@@ -103,15 +100,10 @@ class MessageCell: UITableViewCell {
         if let messageImage = message.messageImage {
             self.messageBody.isHidden = true
             self.messageImage.isHidden = false
-            if let url = URL(string: messageImage) {
-                self.messageImage.download(from: url, placeholder: #imageLiteral(resourceName: "avatar_default"))
-            } else {
-                self.messageImage.image = #imageLiteral(resourceName: "avatar_default")
-            }
+            self.messageImage.download(url: messageImage, placeholder: #imageLiteral(resourceName: "avatar_default"))
         } else {
             self.messageBody.text = message.message
         }
-        //        setNeedsDisplay()
     }
     override func prepareForReuse(){
         super.prepareForReuse()
@@ -141,26 +133,14 @@ class ImcomingMessageCell: MessageCell{
             maker.leading.equalTo(avatar.snp.trailing).offset(10)
         }
         messageLayout.snp.makeConstraints { maker -> Void in
-            maker.leading.equalTo(triangle.snp.trailing).offset(0)
-            //            maker.trailing.lessThanOrEqualToSuperview().offset(-30)
-        }
-        
-        messageImage.snp.makeConstraints { maker -> Void in
-            maker.leading.equalToSuperview().offset(10)
-            maker.trailing.equalToSuperview().offset(-10)
-        }
-        
-        messageBody.snp.makeConstraints { maker -> Void in
-            maker.leading.equalTo(messageLayout.snp.leading)
-            maker.trailing.equalTo(messageLayout.snp.trailing)
+            maker.leading.equalTo(triangle.snp.trailing)
         }
         
         avatar.isHidden = false
         triangle.fillColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
         triangle.rotate(byAngle: -90, ofType: .degrees)
         messageBody.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
-        //        messageBody.textAlignment = .left
-        messageLayout.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+        messageLayout.backgroundColor = triangle.fillColor
     }
 }
 
@@ -179,20 +159,11 @@ class SendingMessageCell: MessageCell {
         messageLayout.snp.makeConstraints { maker -> Void in
             maker.trailing.equalTo(triangle.snp.leading)
         }
-        messageImage.snp.makeConstraints { maker -> Void in
-            maker.leading.equalToSuperview().offset(10)
-            maker.trailing.equalToSuperview().offset(-10)
-        }
-        messageBody.snp.makeConstraints { maker -> Void in
-            maker.trailing.equalTo(messageLayout.snp.trailing)
-            maker.leading.equalTo(messageLayout.snp.leading)
-        }
         
         avatar.isHidden = true
         triangle.fillColor = #colorLiteral(red: 0.7450980544, green: 0.1568627506, blue: 0.07450980693, alpha: 1)
         triangle.rotate(byAngle: 90, ofType: .degrees)
         messageBody.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
-        //        messageBody.textAlignment = .right
-        messageLayout.backgroundColor = #colorLiteral(red: 0.7450980544, green: 0.1568627506, blue: 0.07450980693, alpha: 1)
+        messageLayout.backgroundColor = triangle.fillColor
     }
 }

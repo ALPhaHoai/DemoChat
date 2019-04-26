@@ -63,7 +63,7 @@ class RoomListController: UIViewController, UITableViewDelegate, UITableViewData
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        
         roomTable.deselectAllItems(animated: false)
     }
     
@@ -97,12 +97,7 @@ class RoomListController: UIViewController, UITableViewDelegate, UITableViewData
             cell.smRecievers.text = room.RoomName + " : "
             cell.createAtTime.text = room.UserID
             cell.message.text = room.Name
-            
-            if let url = URL(string: room.Avatar) {
-                cell.contactImage.download(from: url, placeholder: #imageLiteral(resourceName: "avatar_default"))
-            } else {
-                cell.contactImage.image = #imageLiteral(resourceName: "avatar_default")
-            }
+            cell.contactImage.download(url: room.Avatar, placeholder: #imageLiteral(resourceName: "avatar_default"))
             
             if room.page != 0 {
                 cell.unreadSmsCount.isHidden = true
@@ -111,7 +106,7 @@ class RoomListController: UIViewController, UITableViewDelegate, UITableViewData
             }
             
             
-                cell.activeStatusCircle.isHidden = !room.isActive
+            cell.activeStatusCircle.isHidden = !room.isActive
             
             
             return cell
