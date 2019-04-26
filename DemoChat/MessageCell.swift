@@ -32,8 +32,8 @@ class MessageCell: UITableViewCell {
         return messageLayout
     }()
     
-    let messageImage : UIImageView = {
-        let messageImage = UIImageView()
+    let messageImage : ScaleAspectFitImageView = {
+        let messageImage = ScaleAspectFitImageView()
         messageImage.layer.masksToBounds = true
         messageImage.contentMode = .scaleAspectFit
         messageImage.isHidden = true

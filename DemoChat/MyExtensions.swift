@@ -186,7 +186,7 @@ public class ScaleAspectFitImageView : UIImageView {
                                  toItem: self, attribute: .height,
                                  multiplier: aspectRatio, constant: 0)
       // a priority above fitting size level and below low
-      c.priority = (UILayoutPriorityDefaultLow + UILayoutPriorityFittingSizeLevel) / 2.0
+        c.priority = UILayoutPriority(rawValue: (UILayoutPriority.defaultLow.rawValue + UILayoutPriority.fittingSizeLevel.rawValue) / 2)
       self.addConstraint(c)
       self.aspectRatioConstraint = c
     }
