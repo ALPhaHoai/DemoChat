@@ -31,6 +31,20 @@ class RoomListController: UIViewController, UITableViewDelegate, UITableViewData
         return tableView
     }()
     
+    let searchInput: UITextField = {
+        let messageInput = UITextField()
+        messageInput.layer.borderWidth = 1
+        messageInput.layer.borderColor = #colorLiteral(red: 0.3893361358, green: 0.3893361358, blue: 0.3893361358, alpha: 0.6355147688)
+        messageInput.layer.cornerRadius = 40
+        messageInput.backgroundColor = #colorLiteral(red: 0.501960814, green: 0.501960814, blue: 0.501960814, alpha: 1)
+        messageInput.placeholder = "Tìm kiếm"
+        
+        let paddingView: UIView = UIImageView(image: #imageLiteral(resourceName: <#T##String#>))
+        messageInput.leftView = paddingView
+        messageInput.leftViewMode = .always
+        
+        return messageInput
+    }()
     
     let roomTableCellId = "cellId1"
     
@@ -41,23 +55,28 @@ class RoomListController: UIViewController, UITableViewDelegate, UITableViewData
         login("eupvn")
     }
     
-    
-    
-    
-    
-    
-    
     private func setupViews() {
         roomTable.delegate = self
         roomTable.dataSource = self
         roomTable.register(RoomCell.self, forCellReuseIdentifier: roomTableCellId)
         roomTable.backgroundColor = .white
         roomTable.allowsSelection = true
+        roomTable.tableHeaderView = searchInput
         
+
         view.addSubview(roomTable)
+        view.addSubview(searchInput)
+        
+        searchInput.snp.makeConstraints { maker in
+            maker.leading.equalTo(view.snp.leading).offset(10)
+            maker.trailing.equalTo(view.snp.trailing).offset(-10)
+            maker.top.equalTo(view.snp.top).offset(100)
+            maker.height.equalTo(80)
+        }
         
         roomTable.snp.makeConstraints { maker in
-            maker.edges.equalToSuperview()
+            maker.leading.trailing.bottom.equalToSuperview()
+            maker.top.equalTo(searchInput.snp.bottom)
         }
     }
     
