@@ -78,9 +78,9 @@ class MessageCell: UITableViewCell {
             maker.top.equalToSuperview().offset(20)
         }
         messageLayout.snp.makeConstraints { maker in
-        maker.width.lessThanOrEqualToSuperview().multipliedBy(0.7).priority(.required)
-            maker.top.equalToSuperview().offset(10).priority(.high)
-            maker.bottom.equalToSuperview().offset(-10).priority(.high)
+            maker.width.lessThanOrEqualToSuperview().multipliedBy(0.7)
+            maker.top.equalToSuperview().offset(10)
+            maker.bottom.equalToSuperview().offset(-10)
         }
         messageImage.snp.makeConstraints { maker in
             maker.leading.top.equalToSuperview().offset(10)

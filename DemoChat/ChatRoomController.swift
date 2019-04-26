@@ -175,7 +175,7 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
             
             socket!.emit("messagedetection", self.user.User_ID, self.currentRoom.UserID, self.currentRoom.RoomName, messageBody)
             self.messageInput.text = ""
-            self.messageTable.scrollToBottom()
+//            self.messageTable.scrollToBottom()
             
         }
     }
@@ -268,7 +268,7 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
                         newMessage.time = Date().timeIntervalSince1970.int
                         self.messages.append(newMessage)
                         self.messageTable.reloadData()
-                        self.messageTable.scrollToBottom()
+//                        self.messageTable.scrollToBottom()
                     }
                 }
                 

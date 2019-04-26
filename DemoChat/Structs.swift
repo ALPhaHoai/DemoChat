@@ -19,6 +19,23 @@ struct Message {
         }
         return nil
     }
+    var messageFile : String? {
+        if message.starts(with: "<a href=\""), message.ends(with: "</a>") {
+            var url = message
+            url.slice(from: "<a href=\"".count, to: url.lastIndex(of: "\">"))
+            return url
+        }
+        return nil
+    }
+    
+    var messageFileName : String? {
+        if messageFile != nil {
+            var fileName = message
+            fileName.slice(from: message.lastIndex(of: "\">") + 3, to: message.count - 4)
+            return fileName
+        }
+        return nil
+    }
     
     init() {
     }
@@ -100,3 +117,62 @@ class TriangleView : UIView {
         context.fillPath()
     }
 }
+
+public class ScaleAspectFitImageView : UIImageView {
+    /// constraint to maintain same aspect ratio as the image
+    private var aspectRatioConstraint:NSLayoutConstraint? = nil
+    
+    required public init?(coder aDecoder: NSCoder) {
+        super.init(coder:aDecoder)
+        self.setup()
+    }
+    
+    public override init(frame:CGRect) {
+        super.init(frame:frame)
+        self.setup()
+    }
+    
+    public override init(image: UIImage!) {
+        super.init(image:image)
+        self.setup()
+    }
+    
+    public override init(image: UIImage!, highlightedImage: UIImage?) {
+        super.init(image:image,highlightedImage:highlightedImage)
+        self.setup()
+    }
+    
+    override public var image: UIImage? {
+        didSet {
+            self.updateAspectRatioConstraint()
+        }
+    }
+    
+    private func setup() {
+        self.contentMode = .scaleAspectFit
+        self.updateAspectRatioConstraint()
+    }
+    
+    /// Removes any pre-existing aspect ratio constraint, and adds a new one based on the current image
+    private func updateAspectRatioConstraint() {
+        // remove any existing aspect ratio constraint
+        if let c = self.aspectRatioConstraint {
+            self.removeConstraint(c)
+        }
+        self.aspectRatioConstraint = nil
+        
+        if let imageSize = image?.size, imageSize.height != 0
+        {
+            let aspectRatio = imageSize.width / imageSize.height
+            let c = NSLayoutConstraint(item: self, attribute: .width,
+                                       relatedBy: .equal,
+                                       toItem: self, attribute: .height,
+                                       multiplier: aspectRatio, constant: 0)
+            // a priority above fitting size level and below low
+            c.priority = UILayoutPriority(rawValue: (UILayoutPriority.defaultLow.rawValue + UILayoutPriority.fittingSizeLevel.rawValue) / 2)
+            self.addConstraint(c)
+            self.aspectRatioConstraint = c
+        }
+    }
+}
+
