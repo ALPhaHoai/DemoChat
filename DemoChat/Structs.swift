@@ -22,7 +22,7 @@ struct Message {
     var messageFile : String? {
         if message.starts(with: "<a href=\""), message.ends(with: "</a>") {
             var url = message
-            url.slice(from: "<a href=\"".count, to: url.lastIndex(of: "\">"))
+            url.slice(from: "<a href=\"".count, to: message.lastIndexOf("\">"))
             return url
         }
         return nil
@@ -31,7 +31,7 @@ struct Message {
     var messageFileName : String? {
         if messageFile != nil {
             var fileName = message
-            fileName.slice(from: message.lastIndex(of: "\">") + 3, to: message.count - 4)
+            fileName.slice(from: message.lastIndexOf("\">") + 3, to: message.count - 4)
             return fileName
         }
         return nil
