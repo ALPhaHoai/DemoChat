@@ -28,35 +28,32 @@ class MessageCell: UITableViewCell {
     
     let messageLayout : UIView = {
         let messageLayout  = UIView()
-        //messageLayout.layer.masksToBounds = false
-        //messageLayout.clipsToBounds = true
         messageLayout.layer.cornerRadius = 10
-        //messageTextLayout.bounds = messageTextLayout.frame.insetBy(dx: -10.0, dy: -10.0)
         return messageLayout
     }()
     
     let messageImage : UIImageView = {
         let messageImage = UIImageView()
         messageImage.layer.masksToBounds = true
-        messageImage.contentMode = .scaleAspectFill
+        messageImage.contentMode = .scaleAspectFit
         messageImage.isHidden = true
-        //messageImage.image = #imageLiteral(resourceName: "avatar_default")
-        
         return messageImage
     }()
+    
     let messageBody : UILabel = {
         let messageBody = UILabel()
-        //        messageBody.contentMode = .scaleToFill
-        //        messageBody.padding = UIEdgeInsets(inset: 10)
-        //        messageBody.sizeToFit()
-        //        messageBody.minimumScaleFactor = 0.5
-        //        messageBody.lineBreakMode = .byClipping
+        messageBody.contentMode = .scaleToFill
+        messageBody.sizeToFit()
         messageBody.numberOfLines = 0
-        //messageBody.backgroundColor = .blue
+        messageBody.lineBreakMode = NSLineBreakMode.byCharWrapping
         return messageBody
     }()
     
-    
+//    override func layoutSubviews() {
+//        super.layoutSubviews()
+//        self.contentView.layoutIfNeeded()
+//        self.messageBody.preferredMaxLayoutWidth = self.messageBody.frame.size.width
+//    }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -69,29 +66,29 @@ class MessageCell: UITableViewCell {
         messageLayout.addSubview(messageImage)
         messageLayout.addSubview(messageBody)
         
-        cellView.snp.makeConstraints { maker -> Void in
+        cellView.snp.makeConstraints { maker in
             maker.top.equalToSuperview().offset(5)
             maker.bottom.equalToSuperview().offset(-5)
             maker.leading.equalToSuperview().offset(10)
             maker.trailing.equalToSuperview().offset(-10)
         }
-        triangle.snp.makeConstraints { maker -> Void in
+        triangle.snp.makeConstraints { maker in
             maker.width.equalTo(7)
             maker.height.equalTo(10)
             maker.top.equalToSuperview().offset(20)
         }
-        messageLayout.snp.makeConstraints { maker -> Void in
-            maker.width.lessThanOrEqualToSuperview().multipliedBy(0.7)
-            maker.top.equalToSuperview().offset(10)
-            maker.bottom.equalToSuperview().offset(-10)
+        messageLayout.snp.makeConstraints { maker in
+        maker.width.lessThanOrEqualToSuperview().multipliedBy(0.7).priority(.required)
+            maker.top.equalToSuperview().offset(10).priority(.high)
+            maker.bottom.equalToSuperview().offset(-10).priority(.high)
         }
-        messageImage.snp.makeConstraints { maker -> Void in
-            maker.leading.top.equalToSuperview().offset(10).priority(.high)
-            maker.trailing.bottom.equalToSuperview().offset(-10).priority(.high)
+        messageImage.snp.makeConstraints { maker in
+            maker.leading.top.equalToSuperview().offset(10)
+            maker.trailing.bottom.equalToSuperview().offset(-10)
         }
-        messageBody.snp.makeConstraints { maker -> Void in
-            maker.top.leading.equalToSuperview().offset(10).priority(.high)
-            maker.bottom.trailing.equalToSuperview().offset(-10).priority(.high)
+        messageBody.snp.makeConstraints { maker in
+            maker.top.leading.equalToSuperview().offset(10)
+            maker.bottom.trailing.equalToSuperview().offset(-10)
         }
     }
     required init?(coder aDecoder: NSCoder) {
@@ -107,14 +104,6 @@ class MessageCell: UITableViewCell {
             self.messageBody.text = message.message
         }
     }
-    override func prepareForReuse(){
-        super.prepareForReuse()
-        
-        self.messageBody.isHidden = false
-        self.messageImage.isHidden = true
-        self.messageImage.image = nil
-    }
-    
 }
 
 class ImcomingMessageCell: MessageCell{
@@ -126,15 +115,15 @@ class ImcomingMessageCell: MessageCell{
         fatalError("init(coder:) has not been implemented")
     }
     func setupView() {
-        avatar.snp.makeConstraints { maker -> Void in
+        avatar.snp.makeConstraints { maker in
             maker.width.height.equalTo(40)
             maker.top.equalToSuperview().offset(10)
             maker.leading.equalToSuperview().offset(10)
         }
-        triangle.snp.makeConstraints { maker -> Void in
+        triangle.snp.makeConstraints { maker in
             maker.leading.equalTo(avatar.snp.trailing).offset(10)
         }
-        messageLayout.snp.makeConstraints { maker -> Void in
+        messageLayout.snp.makeConstraints { maker in
             maker.leading.equalTo(triangle.snp.trailing)
         }
         
@@ -155,10 +144,10 @@ class SendingMessageCell: MessageCell {
         fatalError("init(coder:) has not been implemented")
     }
     func setupView() {
-        triangle.snp.makeConstraints { maker -> Void in
+        triangle.snp.makeConstraints { maker in
             maker.trailing.equalToSuperview()
         }
-        messageLayout.snp.makeConstraints { maker -> Void in
+        messageLayout.snp.makeConstraints { maker in
             maker.trailing.equalTo(triangle.snp.leading)
         }
         

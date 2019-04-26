@@ -56,7 +56,7 @@ class RoomListController: UIViewController, UITableViewDelegate, UITableViewData
         
         view.addSubview(roomTable)
         
-        roomTable.snp.makeConstraints { maker -> Void in
+        roomTable.snp.makeConstraints { maker in
             maker.edges.equalToSuperview()
         }
     }

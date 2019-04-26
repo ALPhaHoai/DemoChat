@@ -135,7 +135,7 @@ class RoomCell: UITableViewCell {
         }
 
 
-        relativeLayout.snp.makeConstraints { maker -> Void in
+        relativeLayout.snp.makeConstraints { maker in
             maker.leading.trailing.top.equalToSuperview().offset(10)
             maker.height.equalTo(80)
             maker.bottom.equalToSuperview().offset(10)

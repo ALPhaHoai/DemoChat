@@ -162,7 +162,7 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
             maker.bottom.equalToSuperview()
             maker.height.equalTo(65)
         }
-        messageTable.snp.makeConstraints { maker -> Void in
+        messageTable.snp.makeConstraints { maker in
             maker.leading.trailing.equalToSuperview()
             maker.bottom.equalTo(sendMessageBlock.snp.top).offset(-10)
             maker.top.equalToSuperview()
