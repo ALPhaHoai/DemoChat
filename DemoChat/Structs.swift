@@ -22,9 +22,9 @@ struct Message {
     
     var messageFile : String? {
         if message.starts(with: "<a href=\""), message.ends(with: "</a>") {
-            var fileUrl = message.components(separatedBy: "<a href=\"")[1]
-            fileUrl = fileUrl.components(separatedBy: "\">")[1]
-            return fileUrl
+            var href = message.components(separatedBy: "\">")[0]
+            href = href.components(separatedBy: "<a href=\"")[1]
+            return href
         }
         return nil
     }
