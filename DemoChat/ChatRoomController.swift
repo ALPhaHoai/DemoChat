@@ -91,6 +91,8 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
             "receive": self.currentRoom.UserID,
             "currentRoom": self.currentRoom.RoomName,
             ]
+        
+        print(parameters)
         socket?.emit("createroom", parameters)
     }
     
