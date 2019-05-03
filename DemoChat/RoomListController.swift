@@ -14,15 +14,12 @@ import SwifterSwift
 var socketManager: SocketManager? = nil
 public  var socket : SocketIOClient? = nil
 public let endpoint = "http://192.168.1.59:3000"
+var token = ""
 
-class RoomListController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    var token = ""
+class RoomListController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
     var user = User()
-    var RoomList = [Room]() {
-        didSet {
-            roomTable.reloadData()
-        }
-    }
+    var RoomList = [Room]()
+    var InitialRoomList = [Room]()
     
     let roomTable: UITableView = {
         let tableView = UITableView()
@@ -60,6 +57,8 @@ class RoomListController: UIViewController, UITableViewDelegate, UITableViewData
     private func setupViews() {
         roomTable.delegate = self
         roomTable.dataSource = self
+        searchInput.delegate = self
+        searchInput.addTarget(self, action: #selector(searchRoom(_:)), for: .editingChanged)
         roomTable.register(RoomCell.self, forCellReuseIdentifier: roomTableCellId)
         roomTable.backgroundColor = .white
         roomTable.allowsSelection = true
@@ -152,7 +151,7 @@ class RoomListController: UIViewController, UITableViewDelegate, UITableViewData
                     let status = result["status"] as? Int,
                     status == 1,
                     let data = result["data"] as? [String: Any],
-                    let token = data["token"] as? String,
+                    let _token = data["token"] as? String,
                     let users = data["user"] as? [String: Any]
                     else {
                         if let message = result["message"] as? String {
@@ -162,10 +161,8 @@ class RoomListController: UIViewController, UITableViewDelegate, UITableViewData
                         }
                         return;
                 }
-                
-                
-                self.token = token
-                
+              
+                token = _token
                 self.user = User()
                 self.user.Avatar = users["Avatar"] as? String ?? ""
                 self.user.Username = users["Username"] as? String ?? ""
@@ -192,6 +189,8 @@ class RoomListController: UIViewController, UITableViewDelegate, UITableViewData
                 room.isActive = (item["online"] as? Bool ?? false)
                 self.RoomList.append(room)
             }
+            self.InitialRoomList = self.RoomList
+            self.roomTable.reloadData()
         }
     }
     
@@ -217,6 +216,26 @@ class RoomListController: UIViewController, UITableViewDelegate, UITableViewData
         socket = socketManager!.defaultSocket
         print("socket connecting...")
         socket!.connect()
+    }
+    
+    
+    @objc func searchRoom(_ textField: UITextField){
+        guard var searchTxt: String = self.searchInput.text, searchTxt.count > 0 else {
+            self.RoomList = self.InitialRoomList
+            self.roomTable.reloadData()
+            return
+        }
+        
+        searchTxt = searchTxt.lowercased()
+        
+        print("searching : " + searchTxt)
+        self.RoomList = [Room]()
+        for room in self.InitialRoomList {
+            if room.Name.lowercased().contains(searchTxt) || room.RoomName.lowercased().contains(searchTxt) {
+                self.RoomList.append(room)
+            }
+        }
+        self.roomTable.reloadData()
     }
     
     

@@ -12,12 +12,12 @@ import Alamofire
 import MobileCoreServices
 import Floaty
 
-class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIDocumentPickerDelegate {
+class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIDocumentPickerDelegate , UIScrollViewDelegate{
     let INCOMING_MESSAGE_CELL = "INCOMING_MESSAGE_CELL"
     let SENDING_MESSAGE_CELL = "SENDING_MESSAGE_CELL"
-    var token = ""
     var currentRoom = Room()
     var user = User()
+    var requestingChatHistory = false
     
     var messages = [Message]()
     
@@ -67,16 +67,16 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
         return sendMessageBlock
     }()
     
-    let fab: FABButton = {
-        let fab = FABButton(image: #imageLiteral(resourceName: "down_arrow"), tintColor: .white)
-        fab.pulseColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)
-        fab.backgroundColor = .white
-        //        fab.layer.cornerRadius = 20
-        //        fab.backgroundColor = .white
-        //        fab.borderWidth =
-                fab.isHidden = true
-        return fab
-    }()
+    //    let fab: FABButton = {
+    //        let fab = FABButton(image: #imageLiteral(resourceName: "down_arrow"), tintColor: .white)
+    //        fab.pulseColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)
+    //        fab.backgroundColor = .white
+    //        //        fab.layer.cornerRadius = 20
+    //        //        fab.backgroundColor = .white
+    //        //        fab.borderWidth =
+    //                fab.isHidden = true
+    //        return fab
+    //    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -125,7 +125,7 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
         messageTable.delegate = self
         messageTable.dataSource = self
         messageInput.delegate = self
-        messageTable.register(ImcomingMessageCell.self, forCellReuseIdentifier: INCOMING_MESSAGE_CELL)
+        messageTable.register(IncomingMessageCell.self, forCellReuseIdentifier: INCOMING_MESSAGE_CELL)
         messageTable.register(SendingMessageCell.self, forCellReuseIdentifier: SENDING_MESSAGE_CELL)
         //messageTable.backgroundColor = .green
         messageTable.allowsSelection = false
@@ -133,12 +133,12 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
         btnCamera.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(btnCameraTapDetected)))
         btnGallery.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(btnGalleryTapDetected)))
         btnAttachment.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(btnAttachmentTapDetected)))
-        fab.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(fabTaped)))
+        //        fab.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(fabTaped)))
         
         
         view.addSubview(messageTable)
         view.addSubview(sendMessageBlock)
-        view.addSubview(fab)
+        //        view.addSubview(fab)
         
         sendMessageBlock.addSubview(btnCamera)
         sendMessageBlock.addSubview(btnGallery)
@@ -181,11 +181,11 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
             maker.top.equalToSuperview()
         }
         
-        fab.snp.makeConstraints { maker in
-            maker.width.height.equalTo(50)
-            maker.centerX.equalToSuperview()
-            maker.bottom.equalTo(sendMessageBlock.snp.top).offset(-3)
-        }
+        //        fab.snp.makeConstraints { maker in
+        //            maker.width.height.equalTo(50)
+        //            maker.centerX.equalToSuperview()
+        //            maker.bottom.equalTo(sendMessageBlock.snp.top).offset(-3)
+        //        }
     }
     
     @objc func sendMessage(_ sender: AnyObject?) {
@@ -207,27 +207,60 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let message = messages[indexPath.row]
-        if message.incoming, let cell = tableView.dequeueReusableCell(withIdentifier: INCOMING_MESSAGE_CELL, for: indexPath) as? ImcomingMessageCell {
-            cell.setUpData(message: message)
+        if message.incoming, let cell = tableView.dequeueReusableCell(withIdentifier: INCOMING_MESSAGE_CELL, for: indexPath) as? IncomingMessageCell {
+            cell.setUpData(message)
             return cell
         } else if let cell = tableView.dequeueReusableCell(withIdentifier: SENDING_MESSAGE_CELL, for: indexPath) as? SendingMessageCell {
-            cell.setUpData(message: message)
+            cell.setUpData(message)
             return cell
         }
         return UITableViewCell()
     }
     
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        
-        let height = scrollView.frame.size.height
-        let contentYoffSet = scrollView.contentOffset.y
-        let distanceFromBottom = scrollView.contentSize.height - contentYoffSet
-        
-        if distanceFromBottom < height + 200 || targetContentOffset.pointee.y < scrollView.contentOffset.y -  200 {//reach bottom or going up
-            fab.fadeOut()
-        } else if targetContentOffset.pointee.y > scrollView.contentOffset.y +  200{//going down
-            fab.isHidden = false
-            fab.fadeIn()
+    //    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+    //
+    //        let height = scrollView.frame.size.height
+    //        let contentYoffSet = scrollView.contentOffset.y
+    //        let distanceFromBottom = scrollView.contentSize.height - contentYoffSet
+    //
+    //        if distanceFromBottom < height + 200 || targetContentOffset.pointee.y < scrollView.contentOffset.y -  200 {//reach bottom or going up
+    //            fab.fadeOut()
+    //        } else if targetContentOffset.pointee.y > scrollView.contentOffset.y +  200{//going down
+    //            fab.isHidden = false
+    //            fab.fadeIn()
+    //        }
+    //    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row == 0  {
+            self.getChatHistory()
+        }
+    }
+    
+    func getChatHistory(){
+        if requestingChatHistory {
+            return
+        }
+        requestingChatHistory = true
+        Alamofire.request(endpoint + "/get-chat-history", method: .post, parameters: ["token": token, "room_name": self.currentRoom.RoomName, "page": self.currentRoom.page]).responseJSON { res in
+            print(res)
+            guard let result = res.result.value as? [String: Any] ,
+                let status = result["status"] as? Int,
+                status == 1,
+                let data = result["data"] as? [String: Any] ,
+                let histories = data["messages"] as? [[String: Any]] else {
+                    return
+            }
+            
+            for message in histories {
+                var newMessage = Message()
+                newMessage.nickname = message["sender"] as? String ?? " "
+                newMessage.message = message["message"] as? String ?? " "
+                newMessage.incoming = newMessage.nickname == self.user.User_ID
+                newMessage.time = message["time"] as? Int ?? 0
+                self.messages.append(newMessage)
+            }
+            self.messageTable.reloadData()
         }
     }
     
@@ -309,7 +342,6 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
             case .failure(let err):
                 self.showMessage("upload error \(err.localizedDescription)")
             }
-            
         }
     }
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL){
@@ -318,13 +350,13 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     
-    @objc func fabTaped(){
-        fab.fadeOut()
-//        let lastRow: Int = self.messageTable.numberOfRows() - 1
-//        let indexPath = IndexPath(row: lastRow, section: 0)
-//        messageTable.scrollToRow(at: indexPath, at: .top, animated: false)
-        messageTable.scrollToBottom()
-        fab.fadeOut()
-    }
+    //    @objc func fabTaped(){
+    //        fab.fadeOut()
+    ////        let lastRow: Int = self.messageTable.numberOfRows() - 1
+    ////        let indexPath = IndexPath(row: lastRow, section: 0)
+    ////        messageTable.scrollToRow(at: indexPath, at: .top, animated: false)
+    //        messageTable.scrollToBottom()
+    //        fab.fadeOut()
+    //    }
     
 }
