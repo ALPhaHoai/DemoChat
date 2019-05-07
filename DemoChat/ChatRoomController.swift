@@ -291,17 +291,19 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
             
             if histories.count==0 {
                 self.noMoreChatHistory = true
+                print("no more chat history")
+            } else {
+                for message in histories {
+                    var newMessage = Message()
+                    newMessage.nickname = message["sender"] as? String ?? " "
+                    newMessage.message = message["message"] as? String ?? " "
+                    newMessage.incoming = newMessage.nickname == self.user.User_ID
+                    newMessage.time = message["time"] as? Int ?? 0
+                    self.messages.append(newMessage)
+                }
+                self.currentRoom.page  += 1
+                self.messageTable.reloadData()
             }
-            
-            for message in histories {
-                var newMessage = Message()
-                newMessage.nickname = message["sender"] as? String ?? " "
-                newMessage.message = message["message"] as? String ?? " "
-                newMessage.incoming = newMessage.nickname == self.user.User_ID
-                newMessage.time = message["time"] as? Int ?? 0
-                self.messages.append(newMessage)
-            }
-            self.messageTable.reloadData()
         }
     }
     
@@ -361,14 +363,17 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
             case .success(let upload, _, _):
                 upload.responseJSON { response in
                     if let err = response.error {
-                        self.showMessage("upload error \(err.localizedDescription)")
+                        print("upload error: \(err)")
+                        self.showMessage("upload error: \(err)")
                     } else {
                         guard let result = response.result.value as? [String: Any],
                             let status = result["status"] as? Int,
                             status == 1,
                             let data = result["data"] as? [String: Any],
                             let message = data["message"] as? String
-                            else { return }
+                            else {
+                                print("upload error: Invalid response format")
+                                return }
                         
                         var newMessage = Message()
                         newMessage.nickname = self.user.User_ID
@@ -382,7 +387,7 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
                 }
                 
             case .failure(let err):
-                self.showMessage("upload error \(err.localizedDescription)")
+                self.showMessage("upload error: \(err)")
             }
         }
     }

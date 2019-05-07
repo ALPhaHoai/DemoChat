@@ -9,6 +9,5 @@ target 'DemoChat' do
   pod 'Material', '~> 2.16'
   pod 'Alamofire', '~> 4.8.2'
   pod 'SwiftSoup'
-  pod 'NYTPhotoViewer'
 
 end
