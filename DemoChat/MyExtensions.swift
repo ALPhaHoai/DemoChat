@@ -39,11 +39,11 @@ extension UIFont {
         let descriptor = fontDescriptor.withSymbolicTraits(traits)
         return UIFont(descriptor: descriptor!, size: 0) //size 0 means keep the size as it is
     }
-
+    
     func bold() -> UIFont {
         return withTraits(traits: .traitBold)
     }
-
+    
     func italic() -> UIFont {
         return withTraits(traits: .traitItalic)
     }
@@ -86,9 +86,8 @@ extension UITableView {
     }
     
     func myScrollToBottom(){
-        if (indexPathForLastRow != nil){
-            scrollToRow(at:  indexPathForLastRow!, at: .bottom, animated: false)
-        }
+        guard let lastRow = indexPathForLastRow, lastRow != IndexPath(row: 0, section: 0) else { return }
+        scrollToRow(at:  lastRow, at: .bottom, animated: false)
     }
 }
 
