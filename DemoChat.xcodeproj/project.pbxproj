@@ -128,7 +128,7 @@
 		59A95E78C32DC02B036748D3 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				ORGANIZATIONNAME = ___FULLUSERNAME___;
+				ORGANIZATIONNAME = "___FULLUSERNAME___";
 			};
 			buildConfigurationList = 59A95E77E87891E55FE0CBEB /* Build configuration list for PBXProject "DemoChat" */;
 			compatibilityVersion = "Xcode 3.2";

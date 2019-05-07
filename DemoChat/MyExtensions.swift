@@ -84,5 +84,11 @@ extension UITableView {
         reloadRows(at: [indexPath], with: .none)
         endUpdates()
     }
+    
+    func myScrollToBottom(){
+        if (indexPathForLastRow != nil){
+            scrollToRow(at:  indexPathForLastRow!, at: .bottom, animated: false)
+        }
+    }
 }
 

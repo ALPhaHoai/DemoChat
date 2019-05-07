@@ -110,6 +110,7 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
                         self.messages.append(newMessage)
                     }
                     self.messageTable.reloadData()
+                    self.messageTable.myScrollToBottom()
 //                    self.messageTable.scrollToBottom()
                 } else {
                     print("detect message \(response)")
@@ -120,7 +121,7 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
                     newMessage.time = response["time"] as? Int ?? 0
                     self.messages.append(newMessage)
                     self.messageTable.reloadData()
-                    self.messageTable.scrollToBottom(animated: true)
+                    self.messageTable.myScrollToBottom()
                 }
             }
         }
@@ -376,7 +377,7 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
                         newMessage.time = Date().timeIntervalSince1970.int
                         self.messages.append(newMessage)
                         self.messageTable.reloadData()
-                        //                        self.messageTable.scrollToBottom()
+                        self.messageTable.myScrollToBottom()
                     }
                 }
                 
