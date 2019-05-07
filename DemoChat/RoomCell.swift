@@ -64,6 +64,7 @@ class RoomCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     private func setUpViews() {
+        selectionStyle = .none
         backgroundColor = UIColor.white
         addSubview(relativeLayout)
 

@@ -10,8 +10,8 @@ import SwifterSwift
 import UIKit
 
 extension UIImageView {
-    func download(url: String, placeholder: UIImage){
-        if let u = URL(string: url) {
+    func download(url: String?, placeholder: UIImage){
+        if let unwapUrl = url, let u = URL(string: unwapUrl) {
             self.download(from: u, placeholder: placeholder)
         } else {
             self.image = placeholder

@@ -81,16 +81,11 @@ class RoomListController: UIViewController, UITableViewDelegate, UITableViewData
         
         searchIcon.snp.makeConstraints { maker in
             maker.centerY.equalTo(searchInput.snp.centerY)
-            maker.width.height.equalTo(30)
+            maker.width.height.equalTo(28)
             maker.leading.equalTo(searchInput.snp.leading).offset(20)
         }
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        roomTable.deselectAllItems(animated: false)
-    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.RoomList.count

@@ -1,6 +1,6 @@
 PODS:
   - Alamofire (4.8.2)
-  - Floaty (4.2.0)
+  - FLAnimatedImage (1.0.12)
   - Material (2.16.4):
     - Material/Core (= 2.16.4)
   - Material/Core (2.16.4):
@@ -8,6 +8,13 @@ PODS:
   - Motion (1.4.3):
     - Motion/Core (= 1.4.3)
   - Motion/Core (1.4.3)
+  - NYTPhotoViewer (2.0.0):
+    - NYTPhotoViewer/AnimatedGifSupport (= 2.0.0)
+    - NYTPhotoViewer/Core (= 2.0.0)
+  - NYTPhotoViewer/AnimatedGifSupport (2.0.0):
+    - FLAnimatedImage (~> 1.0.12)
+    - NYTPhotoViewer/Core
+  - NYTPhotoViewer/Core (2.0.0)
   - SnapKit (4.0.1)
   - Socket.IO-Client-Swift (14.0.0):
     - Starscream (~> 3.0.6)
@@ -29,36 +36,42 @@ PODS:
   - SwifterSwift/SpriteKit (4.6.0)
   - SwifterSwift/SwiftStdlib (4.6.0)
   - SwifterSwift/UIKit (4.6.0)
+  - SwiftSoup (2.0.0)
 
 DEPENDENCIES:
   - Alamofire (~> 4.8.2)
-  - Floaty (~> 4.2.0)
   - Material (~> 2.16)
+  - NYTPhotoViewer
   - SnapKit (~> 4.0.0)
   - Socket.IO-Client-Swift (~> 14.0.0)
   - SwifterSwift (~> 4.6.0)
+  - SwiftSoup
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - Alamofire
-    - Floaty
+    - FLAnimatedImage
     - Material
     - Motion
+    - NYTPhotoViewer
     - SnapKit
     - Socket.IO-Client-Swift
     - Starscream
     - SwifterSwift
+    - SwiftSoup
 
 SPEC CHECKSUMS:
   Alamofire: ae5c501addb7afdbb13687d7f2f722c78734c2d3
-  Floaty: e2bd5a0f6f7f70899e26ff2da31081c8bee8d1b0
+  FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
   Material: 4ed78690b09ffd148b5ffab6b4367fb1d8da1cd3
   Motion: 153ba49692997888556c7a95207278a8b1f8be95
+  NYTPhotoViewer: 34b8bd6bcc297466adec1668f9a01249d73c90e6
   SnapKit: 0de968a9fec17499afa29683b05d0c775b6d1c29
   Socket.IO-Client-Swift: 21e6a8a23a7d367d5ddfab6cbbd3c679cf3c25d6
   Starscream: ef3ece99d765eeccb67de105bfa143f929026cf5
   SwifterSwift: 812ffec6f301922f5430e75be3f2939ea3a80024
+  SwiftSoup: 4fe21f65cdbfa3a40559047016b7962b88d29279
 
-PODFILE CHECKSUM: 4b53957d8110f7c7af9f43d631aa3df304c7c210
+PODFILE CHECKSUM: 0cb9afb73950683281354655c477d7ae0c4cf067
 
 COCOAPODS: 1.6.1

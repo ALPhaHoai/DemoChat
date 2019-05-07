@@ -4,37 +4,72 @@
 //
 
 import UIKit
+import SwiftSoup
 
+enum MessageType {
+    case photo
+    case text
+    case file
+}
 struct Message {
     var nickname = ""
     var message = ""
     var incoming = false
     var time = 0
     
-    var messageImage : String? {
-        if message.starts(with: "<img src=\""), message.ends(with: "\">") {
-            var url = message
-            url.slice(from: "<img src=\"".count, to: url.count - 2)
-            return url
+    var type: MessageType {
+        if messageImage != nil {
+            return .photo
+        } else if messageFile != nil {
+            return .file
+        } else {
+            return .text
         }
-        return nil
+    }
+    
+    var messageImage : String? {
+        do {
+            let doc: Document = try SwiftSoup.parse(message)
+            let img = try doc.select("img").first()
+            if let src : String = try img?.attr("src"), src.starts(with: "http"){
+                return src
+            } else {
+                return nil
+            }
+            
+        } catch {
+            return nil
+        }
     }
     
     var messageFile : String? {
-        if message.starts(with: "<a href=\""), message.ends(with: "</a>") {
-            var href = message.components(separatedBy: "\">")[0]
-            href = href.components(separatedBy: "<a href=\"")[1]
-            return href
+        do {
+            let doc: Document = try SwiftSoup.parse(message)
+            let a = try doc.select("a").first()
+            if let href: String = try a?.attr("href") , href.starts(with: "http"){
+                return href
+            } else {
+                return nil
+            }
+        } catch {
+            return nil
         }
-        return nil
     }
     var messageFileName : String? {
-        if message.starts(with: "<a href=\""), message.ends(with: "</a>") {
-            var fileName = message.components(separatedBy: "\">")[1]
-            fileName = fileName.components(separatedBy: "</a>")[0]
-            return fileName
+        if messageFile == nil {
+            return nil
         }
-        return nil
+        do {
+            let doc: Document = try SwiftSoup.parse(message)
+            let a = try doc.select("a").first()
+            if let text = try a?.text() {
+                return text
+            } else {
+                return nil
+            }
+        } catch {
+            return nil
+        }
     }
     
     init() {
@@ -173,6 +208,20 @@ public class ScaleAspectFitImageView : UIImageView {
             self.addConstraint(c)
             self.aspectRatioConstraint = c
         }
+    }
+    
+   
+}
+
+class IntrinsicTableView: UITableView {
+    override var contentSize: CGSize {
+        didSet {
+            self.invalidateIntrinsicContentSize()
+        }
+    }
+    override var intrinsicContentSize: CGSize {
+        self.layoutIfNeeded()
+        return CGSize(width: UIView.noIntrinsicMetric, height: contentSize.height)
     }
 }
 

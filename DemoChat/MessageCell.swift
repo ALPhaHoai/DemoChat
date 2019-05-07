@@ -16,16 +16,15 @@ class MessageCell: UITableViewCell {
     let messageLayout = UIView()
     
     func setUpData(_ message: Message){
-        if let messageImage = message.messageImage {
+        switch message.type {
+        case .text:
+            self.messageBody.text = message.message
+        case .photo:
             self.messageBody.isHidden = true
             self.messageImage.isHidden = false
-            if let url = URL(string: messageImage) {
-                self.messageImage.download(from: url, placeholder: #imageLiteral(resourceName: "avatar_default"))
-            } else {
-                self.messageImage.image = #imageLiteral(resourceName: "avatar_default")
-            }
-        } else {
-            self.messageBody.text = message.message
+            self.messageImage.download(url: message.messageImage, placeholder: #imageLiteral(resourceName: "avatar_default"))
+        case .file:
+            self.messageBody.text =  message.messageFileName
         }
     }
     
@@ -44,11 +43,21 @@ class MessageCell: UITableViewCell {
         return triangle
     }()
     
+    override func prepareForReuse() {
+        messageImage.isHidden = true
+        messageBody.isHidden = false
+        messageBody.text = nil
+        messageImage.image = nil
+        super.prepareForReuse()
+    }
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         backgroundColor = .clear
         
+        selectionStyle = .none
+//        transform = CGAffineTransform(scaleX: 1, y: -1)
         messageLayout.backgroundColor = .yellow
         messageLayout.layer.cornerRadius = 12
         

@@ -10,7 +10,7 @@ import Material
 import SwifterSwift
 import Alamofire
 import MobileCoreServices
-import Floaty
+//import Floaty
 
 class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIDocumentPickerDelegate , UIScrollViewDelegate{
     let INCOMING_MESSAGE_CELL = "INCOMING_MESSAGE_CELL"
@@ -18,14 +18,15 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
     var currentRoom = Room()
     var user = User()
     var requestingChatHistory = false
-    
+    var noMoreChatHistory = false
     var messages = [Message]()
     
     let messageTable: UITableView = {
-        let tableView = UITableView()
-        tableView.separatorStyle = .none
-        tableView.allowsSelection = true
-        return tableView
+        let messageTable = UITableView()
+        messageTable.separatorStyle = .none
+        messageTable.allowsSelection = true
+//        messageTable.transform = CGAffineTransform(scaleX: 1, y: -1)
+        return messageTable
     }()
     
     let btnCamera: UIImageView = {
@@ -92,7 +93,6 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
             "currentRoom": self.currentRoom.RoomName,
             ]
         
-        print(parameters)
         socket?.emit("createroom", parameters)
     }
     
@@ -100,6 +100,7 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
         socket!.on("message") { (data, ack) in
             if let response = data[0] as? [String: Any] {
                 if let histories = response["histories"] as? [[String: Any]] {
+                    print("detect message \(histories)")
                     for message in histories {
                         var newMessage = Message()
                         newMessage.nickname = message["sender"] as? String ?? " "
@@ -109,14 +110,17 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
                         self.messages.append(newMessage)
                     }
                     self.messageTable.reloadData()
+//                    self.messageTable.scrollToBottom()
                 } else {
+                    print("detect message \(response)")
                     var newMessage = Message()
                     newMessage.nickname = response["sender"] as? String ?? " "
                     newMessage.message = response["message"] as? String ?? " "
-                    newMessage.incoming = newMessage.nickname == self.user.User_ID
+                    newMessage.incoming = newMessage.nickname != self.user.User_ID
                     newMessage.time = response["time"] as? Int ?? 0
                     self.messages.append(newMessage)
                     self.messageTable.reloadData()
+                    self.messageTable.scrollToBottom(animated: true)
                 }
             }
         }
@@ -129,8 +133,6 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
         messageInput.delegate = self
         messageTable.register(IncomingMessageCell.self, forCellReuseIdentifier: INCOMING_MESSAGE_CELL)
         messageTable.register(SendingMessageCell.self, forCellReuseIdentifier: SENDING_MESSAGE_CELL)
-        //messageTable.backgroundColor = .green
-        messageTable.allowsSelection = false
         
         btnCamera.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(btnCameraTapDetected)))
         btnGallery.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(btnGalleryTapDetected)))
@@ -180,6 +182,7 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
         messageTable.snp.makeConstraints { maker in
             maker.leading.trailing.equalToSuperview()
             maker.bottom.equalTo(sendMessageBlock.snp.top).offset(-10)
+//            maker.top.greaterThanOrEqualToSuperview()
             maker.top.equalToSuperview()
         }
         
@@ -201,11 +204,23 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let message = messages[indexPath.row]
+        guard let fileUrl = message.messageFile, let fileName = message.messageFileName else {
+            return
+        }
+        self.downloadFile(fileUrl, fileName)
+    }
+    
+    
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.messages.count
     }
     
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableView.automaticDimension
+    }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let message = messages[indexPath.row]
@@ -218,6 +233,19 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
         }
         return UITableViewCell()
     }
+    
+//    func updateTableContentInset(){
+//        let numRows = tableView(self.messageTable, numberOfRowsInSection: 0)
+//        var contentInsetTop = self.messageTable.bounds.size.height
+//        for i in 0..<numRows {
+//            let rowRect = self.messageTable.rectForRow(at: IndexPath(item: i, section: 0))
+//            contentInsetTop -= rowRect.size.height
+//            if contentInsetTop < 0 {
+//                contentInsetTop = 0
+//            }
+//        }
+//        self.messageTable.contentInset = UIEdgeInsets(top: contentInsetTop, left: 0, bottom: 0, right: 0)
+//    }
     
     //    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
     //
@@ -240,18 +268,28 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func getChatHistory(){
-        if requestingChatHistory {
+        guard !noMoreChatHistory, !requestingChatHistory, let time = self.messages.first?.time else {
             return
         }
+        let params: [String : Any] = ["token": token, "room_name": self.currentRoom.RoomName, "page": self.currentRoom.page, "currentMessTime": time]
+        
+        print("requestingChatHistory \(self.currentRoom.page)")
         requestingChatHistory = true
-        Alamofire.request(endpoint + "/get-chat-history", method: .post, parameters: ["token": token, "room_name": self.currentRoom.RoomName, "page": self.currentRoom.page]).responseJSON { res in
-            print(res)
+        Alamofire.request(endpoint + "/get-chat-history", method: .post, parameters: params).responseJSON { res in
+            self.requestingChatHistory = false
             guard let result = res.result.value as? [String: Any] ,
                 let status = result["status"] as? Int,
                 status == 1,
                 let data = result["data"] as? [String: Any] ,
-                let histories = data["messages"] as? [[String: Any]] else {
+                let histories = data["messages"] as? [[String: Any]]
+                else {
+                    print(params)
+                    print(res)
                     return
+            }
+            
+            if histories.count==0 {
+                self.noMoreChatHistory = true
             }
             
             for message in histories {
@@ -312,6 +350,7 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
         uploadImage(image: image, fileName: url.lastPathComponent)
         picker.dismiss(animated: true, completion: nil)
     }
+    
     func uploadImage(image: UIImage, fileName: String){
         let imgData = image.jpegData(compressionQuality: 0.2)!
         Alamofire.upload(multipartFormData: { (MultipartFormData) in
@@ -346,9 +385,26 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
             }
         }
     }
+    
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL){
         let myUrl = url as URL
         print("import result : \(myUrl)")
+    }
+    
+    func downloadFile (_ url: String, _ name: String){
+        let destination: DownloadRequest.DownloadFileDestination = { _, _ in
+            let documentsUrl = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
+            let fileUrl = documentsUrl.appendingPathComponent(name)
+            return (fileUrl, [.removePreviousFile, .createIntermediateDirectories])
+        }
+        
+        Alamofire.download(url, to: destination).response { response in
+            if response.error == nil, let filePath = response.destinationURL?.path {
+               self.showMessage("Saved file \(name) to \(filePath)")
+            } else {
+                self.showMessage("Error \(response.error!)")
+            }
+        }
     }
     
     

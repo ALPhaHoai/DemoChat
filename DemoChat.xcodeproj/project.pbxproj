@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		323BC4842269A65C00472D31 /* MyExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 323BC4832269A65C00472D31 /* MyExtensions.swift */; };
+		32921F4A22813F00009F7721 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32921F4922813F00009F7721 /* Helper.swift */; };
 		59A95005CC418560AB4A6D3E /* ChatRoomController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A95304CC6BC4B88B6F33DD /* ChatRoomController.swift */; };
 		59A952C51466120708D033A0 /* RoomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A95E8A27CBEA5A0BE937DD /* RoomCell.swift */; };
 		59A952F2E3C8CF4F0CB735EE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 59A9574DECAB880D5681880F /* Assets.xcassets */; };
@@ -20,6 +21,7 @@
 
 /* Begin PBXFileReference section */
 		323BC4832269A65C00472D31 /* MyExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyExtensions.swift; sourceTree = "<group>"; };
+		32921F4922813F00009F7721 /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		59A95304CC6BC4B88B6F33DD /* ChatRoomController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatRoomController.swift; sourceTree = "<group>"; };
 		59A953987AE80D60F765D681 /* RoomListController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomListController.swift; sourceTree = "<group>"; };
 		59A953C570C58754F4A22B5B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
@@ -58,6 +60,7 @@
 				59A9592AD89DC99E0C804862 /* MessageCell.swift */,
 				59A956CFB1B5DD3E9612364F /* Structs.swift */,
 				59A953987AE80D60F765D681 /* RoomListController.swift */,
+				32921F4922813F00009F7721 /* Helper.swift */,
 			);
 			path = DemoChat;
 			sourceTree = "<group>";
@@ -166,12 +169,14 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-DemoChat/Pods-DemoChat-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
-				"${BUILT_PRODUCTS_DIR}/Floaty/Floaty.framework",
+				"${BUILT_PRODUCTS_DIR}/FLAnimatedImage/FLAnimatedImage.framework",
 				"${BUILT_PRODUCTS_DIR}/Material/Material.framework",
 				"${BUILT_PRODUCTS_DIR}/Motion/Motion.framework",
+				"${BUILT_PRODUCTS_DIR}/NYTPhotoViewer/NYTPhotoViewer.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 				"${BUILT_PRODUCTS_DIR}/Socket.IO-Client-Swift/SocketIO.framework",
 				"${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftSoup/SwiftSoup.framework",
 				"${BUILT_PRODUCTS_DIR}/SwifterSwift/SwifterSwift.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -179,12 +184,14 @@
 			);
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Floaty.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FLAnimatedImage.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Material.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Motion.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NYTPhotoViewer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SocketIO.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Starscream.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftSoup.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwifterSwift.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -228,6 +235,7 @@
 				59A95CF1A88C29ECD3570198 /* MessageCell.swift in Sources */,
 				59A956FD2C389F0F7ED864E7 /* Structs.swift in Sources */,
 				59A95EA75CBD795B61088665 /* RoomListController.swift in Sources */,
+				32921F4A22813F00009F7721 /* Helper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
