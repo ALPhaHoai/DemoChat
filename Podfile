@@ -10,4 +10,5 @@ target 'DemoChat' do
   pod 'Alamofire', '~> 4.8.2'
   pod 'SwiftSoup'
   pod 'IQKeyboardManagerSwift'
+  pod 'Kingfisher'
 end

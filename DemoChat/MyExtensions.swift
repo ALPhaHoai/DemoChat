@@ -8,11 +8,13 @@
 
 import SwifterSwift
 import UIKit
+import Kingfisher
 
 extension UIImageView {
     func download(url: String?, placeholder: UIImage){
         if let unwapUrl = url, let u = URL(string: unwapUrl) {
-            self.download(from: u, placeholder: placeholder)
+            self.kf.setImage(with: u, placeholder: placeholder) //Kingfisher cache image
+//            self.download(from: u, placeholder: placeholder)
         } else {
             self.image = placeholder
         }
