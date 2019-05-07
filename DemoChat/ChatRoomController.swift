@@ -414,6 +414,7 @@ class ChatRoomController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     
+    
     //    @objc func fabTaped(){
     //        fab.fadeOut()
     ////        let lastRow: Int = self.messageTable.numberOfRows() - 1

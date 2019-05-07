@@ -1,5 +1,6 @@
 PODS:
   - Alamofire (4.8.2)
+  - IQKeyboardManagerSwift (6.2.1)
   - Material (2.16.4):
     - Material/Core (= 2.16.4)
   - Material/Core (2.16.4):
@@ -32,6 +33,7 @@ PODS:
 
 DEPENDENCIES:
   - Alamofire (~> 4.8.2)
+  - IQKeyboardManagerSwift
   - Material (~> 2.16)
   - SnapKit (~> 4.0.0)
   - Socket.IO-Client-Swift (~> 14.0.0)
@@ -41,6 +43,7 @@ DEPENDENCIES:
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - Alamofire
+    - IQKeyboardManagerSwift
     - Material
     - Motion
     - SnapKit
@@ -51,6 +54,7 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   Alamofire: ae5c501addb7afdbb13687d7f2f722c78734c2d3
+  IQKeyboardManagerSwift: 0f0ae8935360b4003e6ea1ac7c19898f01e2f7c7
   Material: 4ed78690b09ffd148b5ffab6b4367fb1d8da1cd3
   Motion: 153ba49692997888556c7a95207278a8b1f8be95
   SnapKit: 0de968a9fec17499afa29683b05d0c775b6d1c29
@@ -59,6 +63,6 @@ SPEC CHECKSUMS:
   SwifterSwift: 812ffec6f301922f5430e75be3f2939ea3a80024
   SwiftSoup: 4fe21f65cdbfa3a40559047016b7962b88d29279
 
-PODFILE CHECKSUM: 88561eb710891375d2acf4b0b4b2af35e3b28cbf
+PODFILE CHECKSUM: 7dc1a05bc5880288bf1f509b8ce18df943adf18a
 
 COCOAPODS: 1.6.1
